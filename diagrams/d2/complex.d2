@@ -1,0 +1,34 @@
+direction: right
+
+frontend: {
+  direction: right
+  web: Web App
+  mobile: Mobile App
+}
+
+backend: {
+  direction: right
+  gateway: Gateway
+  api: API
+  worker: Worker
+}
+
+storage: {
+  direction: right
+  cache: Redis
+  db: Postgres {
+    shape: cylinder
+  }
+  bus: Kafka
+  archive: Archive
+}
+
+frontend.web -> backend.gateway
+frontend.mobile -> backend.gateway
+backend.gateway -> backend.api
+backend.api -> storage.cache
+backend.api -> storage.db
+backend.api -> storage.bus
+backend.worker -> storage.bus
+backend.worker -> storage.db
+backend.worker -> storage.archive

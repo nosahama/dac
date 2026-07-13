@@ -1,0 +1,9 @@
+digraph G {
+  rankdir=LR;
+  user [label="User", shape=box];
+  web [label="Web App", shape=box];
+  api [label="API", shape=box];
+  db [label="Postgres", shape=cylinder];
+
+  user -> web -> api -> db;
+}

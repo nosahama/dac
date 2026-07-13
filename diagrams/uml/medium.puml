@@ -1,0 +1,26 @@
+@startuml
+title Service collaboration
+skinparam componentStyle rectangle
+
+package "Frontend" {
+  [Web UI] as web
+}
+
+package "Backend" {
+  [API] as api
+  [Worker] as worker
+}
+
+package "Data" {
+  database "Postgres" as db
+  queue "SQS" as queue
+  [Cache] as cache
+}
+
+web --> api
+api --> cache
+api --> db
+api --> queue
+queue --> worker
+worker --> db
+@enduml

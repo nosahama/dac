@@ -1,0 +1,9 @@
+!ifndef C4_CONTAINER_PUML
+!define C4_CONTAINER_PUML
+
+!define Person($alias, $label, $desc="") rectangle "$label\n$desc" as $alias <<person>>
+!define Container($alias, $label, $tech="", $desc="") rectangle "$label\n$tech\n$desc" as $alias <<container>>
+!define System($alias, $label, $desc="") rectangle "$label\n$desc" as $alias <<system>>
+!define Rel($from, $to, $label="", $tech="") $from --> $to : $label
+
+!endif

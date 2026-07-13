@@ -1,0 +1,13 @@
+sequenceDiagram
+  participant User
+  participant UI
+  participant API
+  participant Queue
+  participant Worker
+
+  User->>UI: submit order
+  UI->>API: POST /orders
+  API->>Queue: enqueue job
+  Queue-->>Worker: deliver job
+  Worker->>API: update status
+  API-->>UI: accepted

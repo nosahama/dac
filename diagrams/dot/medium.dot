@@ -1,0 +1,36 @@
+digraph G {
+  rankdir=LR;
+  compound=true;
+  fontsize=12;
+
+  subgraph cluster_frontend {
+    label="Frontend";
+    style="rounded,filled";
+    color="#dde7ff";
+    ui [label="UI", shape=box];
+  }
+
+  subgraph cluster_backend {
+    label="Backend";
+    style="rounded,filled";
+    color="#dff3e3";
+    api [label="API", shape=box];
+    worker [label="Worker", shape=box];
+  }
+
+  subgraph cluster_data {
+    label="Data";
+    style="rounded,filled";
+    color="#f7e6d4";
+    cache [label="Cache", shape=cylinder];
+    db [label="Database", shape=cylinder];
+    queue [label="Queue", shape=ellipse];
+  }
+
+  ui -> api;
+  api -> cache;
+  api -> db;
+  api -> queue;
+  queue -> worker;
+  worker -> db;
+}

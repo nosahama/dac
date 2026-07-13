@@ -1,0 +1,44 @@
+digraph G {
+  rankdir=LR;
+  compound=true;
+  splines=true;
+  nodesep=0.5;
+  ranksep=0.8;
+
+  subgraph cluster_edge {
+    label="Edge";
+    style="rounded,filled";
+    color="#e1ecff";
+    cdn [label="CDN", shape=box];
+    waf [label="WAF", shape=box];
+    lb [label="Load Balancer", shape=box];
+  }
+
+  subgraph cluster_app {
+    label="Application";
+    style="rounded,filled";
+    color="#e4f5e7";
+    ui [label="UI", shape=box];
+    api [label="API", shape=box];
+    worker [label="Worker", shape=box];
+  }
+
+  subgraph cluster_data {
+    label="Data";
+    style="rounded,filled";
+    color="#f9e8d7";
+    cache [label="Redis", shape=cylinder];
+    db [label="Postgres", shape=cylinder];
+    bus [label="Kafka", shape=ellipse];
+    archive [label="Archive", shape=box];
+  }
+
+  cdn -> waf -> lb -> ui;
+  ui -> api;
+  api -> cache;
+  api -> db;
+  api -> bus;
+  worker -> bus;
+  worker -> db;
+  bus -> archive;
+}

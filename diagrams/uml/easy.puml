@@ -1,0 +1,14 @@
+@startuml
+title Simple request flow
+actor User
+participant "Web App" as Web
+participant API
+database Postgres
+
+User -> Web : request dashboard
+Web -> API : fetch profile
+API -> Postgres : read user
+Postgres --> API : rows
+API --> Web : JSON
+Web --> User : page
+@enduml

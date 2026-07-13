@@ -1,0 +1,32 @@
+direction: right
+
+edge: {
+  direction: right
+  cdn: CDN
+  waf: WAF
+  lb: Load Balancer
+}
+
+app: {
+  direction: right
+  ui: Web UI
+  api: API
+  worker: Worker
+}
+
+data: {
+  direction: right
+  cache: Redis
+  db: Postgres {
+    shape: cylinder
+  }
+  bus: Kafka
+}
+
+edge.cdn -> edge.waf -> edge.lb -> app.ui
+app.ui -> app.api
+app.api -> data.cache
+app.api -> data.db
+app.api -> data.bus
+app.worker -> data.bus
+app.worker -> data.db

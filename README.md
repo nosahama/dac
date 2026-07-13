@@ -1,59 +1,196 @@
 # dac - Diagrams as Code
 
-Combinations of Diagrams as Code tools, aiming for a minimal workflow.
+`dac` is a compact diagram-as-code playground with a single Docker-based workflow.
 
-## Motivation
+It currently supports these engines:
 
-Diagrams really aid understanding a software system or architecture and the tooling around such diagramming techniques are not quite straight forward or need installation of many dependencies.
-We use a minimal docker image and container to run all diagram processing.
+- Python `diagrams`
+- PlantUML
+- Mermaid
+- Graphviz DOT
+- D2
 
-## Tools
+There is also a C4 PlantUML example using the standard C4 include files.
 
-The project includes ability to generate diagrams from code using:
+## Why this repo exists
 
-- Python - [diagrams](https://diagrams.mingrammer.com/). Generates architecture diagrams from python code.
-- Uml - [plantuml](https://plantuml.com/). Generates any uml diagram.
-- C4 Model - [c4-plantuml](https://github.com/plantuml-stdlib/C4-PlantUML). Generates diagrams from uml code with C4 resources available.
-- Docker - To run and containerize the tools.
+The goal is to keep the workflow small:
 
-## Example Outputs (`png`)
+- one container
+- one `Makefile`
+- sample inputs for easy, medium, and complex diagrams
+- render outputs written to `./output`
 
-### C4
+## Quickstart
 
-![test_c4](https://user-images.githubusercontent.com/16656207/179087128-b4fe4921-abfd-42ce-9c03-fb7b382d366c.png)
+Build and start the renderer container:
 
-### Uml
+```bash
+make run-container
+```
 
-![test](https://user-images.githubusercontent.com/16656207/179087059-f841f2fb-699a-4466-821e-ef8bd519477d.png)
+Run a quick environment check:
 
-### Python
+```bash
+make doctor
+```
 
-![consumer](https://user-images.githubusercontent.com/16656207/179086957-85fffea6-bd55-4d88-9598-a69f5a4d0302.png)
+List bundled examples and output locations:
 
-## Workflow
+```bash
+make list
+```
 
-`make help`
+Render a single example with the shorthand target:
 
-#### Run container
+```bash
+make render engine=py filename=easy
+make render engine=puml filename=medium
+make render engine=mermaid filename=complex
+make render engine=dot filename=easy
+make render engine=d2 filename=medium
+```
 
-`make run-container`
+Or use the engine-specific targets directly:
 
-- builds the docker image and runs the container
+```bash
+make generate-py filename=easy inputext=py
+make generate-puml filename=easy inputext=puml
+make generate-mermaid filename=easy inputext=mmd
+make generate-dot filename=easy inputext=dot
+make generate-d2 filename=easy inputext=d2
+```
 
-#### Generate Diagrams
+Render every bundled example:
 
-##### C4 Model
+```bash
+make render-all
+```
 
-`filename=test_c4 inputext=puml outputext=png make diagrams-uml`
+Run the full verification pass:
 
-##### UML
+```bash
+make test
+```
 
-`filename=test inputext=uml outputext=png make diagrams-uml`
+Stop the container:
 
-##### Python
+```bash
+make stop-container
+```
 
-`filename=consumer inputext=py outputext=png make diagrams-py`
+## Supported diagram types
 
-#### Stop container
+### Python diagrams
 
-`make stop-container`
+Python diagrams are best when you want cloud architecture diagrams driven by Python code.
+
+Example files:
+
+- `diagrams/py/easy.py`
+- `diagrams/py/medium.py`
+- `diagrams/py/complex.py`
+- `diagrams/py/consumer.py`
+
+Render:
+
+```bash
+make generate-py filename=complex inputext=py
+```
+
+### PlantUML
+
+PlantUML covers sequence diagrams, component diagrams, deployment diagrams, and more.
+
+Example files:
+
+- `diagrams/uml/easy.puml`
+- `diagrams/uml/medium.puml`
+- `diagrams/uml/complex.puml`
+- `diagrams/uml/test.uml`
+- `diagrams/uml/test_c4.puml`
+
+Render:
+
+```bash
+make generate-puml filename=complex inputext=puml
+```
+
+The C4 example uses a small local compatibility include so it renders without any external fetches.
+
+### Mermaid
+
+Mermaid is the easiest path for lightweight architecture, flowchart, and sequence diagrams in docs.
+In this repo, Mermaid examples are rendered through Kroki, which keeps the container small and avoids browser setup.
+
+Example files:
+
+- `diagrams/mermaid/easy.mmd`
+- `diagrams/mermaid/medium.mmd`
+- `diagrams/mermaid/complex.mmd`
+
+Render:
+
+```bash
+make generate-mermaid filename=medium inputext=mmd
+```
+
+### Graphviz DOT
+
+DOT is useful when you want direct layout control and a very stable rendering path.
+
+Example files:
+
+- `diagrams/dot/easy.dot`
+- `diagrams/dot/medium.dot`
+- `diagrams/dot/complex.dot`
+
+Render:
+
+```bash
+make generate-dot filename=complex inputext=dot
+```
+
+### D2
+
+D2 is a modern diagram scripting language with strong layout and styling support.
+
+Example files:
+
+- `diagrams/d2/easy.d2`
+- `diagrams/d2/medium.d2`
+- `diagrams/d2/complex.d2`
+
+Render:
+
+```bash
+make generate-d2 filename=easy inputext=d2
+```
+
+## Output layout
+
+Rendered PNGs are written to:
+
+- `output/py/...`
+- `output/uml/...`
+- `output/mermaid/...`
+- `output/dot/...`
+- `output/d2/...`
+
+D2 also keeps the native SVG output next to the PNG preview:
+
+- `output/d2/*.svg`
+- `output/d2/*.png`
+
+## What `make test` checks
+
+`make test` renders every example in the repository and verifies the expected PNG files exist and are non-empty.
+
+That gives you a quick smoke test for:
+
+- Python `diagrams`
+- PlantUML
+- Mermaid
+- Graphviz DOT
+- D2
+- the C4 PlantUML sample

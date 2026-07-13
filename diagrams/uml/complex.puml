@@ -1,0 +1,38 @@
+@startuml
+title Multi-zone deployment
+left to right direction
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+cloud "Internet" {
+  [CDN] as cdn
+}
+
+node "VPC" {
+  node "Public Subnet" {
+    [Ingress] as ingress
+  }
+
+  node "Private Subnet A" {
+    [Web] as web
+    [API] as api
+  }
+
+  node "Private Subnet B" {
+    [Worker] as worker
+    database "Primary DB" as db
+  }
+
+  queue "Event Bus" as bus
+  folder "Archive" as archive
+}
+
+cdn --> ingress
+ingress --> web
+web --> api
+api --> db
+api --> bus
+bus --> worker
+worker --> archive
+worker --> db
+@enduml

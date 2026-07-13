@@ -1,0 +1,26 @@
+flowchart TB
+  subgraph Edge
+    CDN[CDN]
+    WAF[WAF]
+    LB[Load Balancer]
+  end
+
+  subgraph App
+    UI[Web UI]
+    API[API]
+    Worker[Worker]
+  end
+
+  subgraph Data
+    Cache[(Redis)]
+    DB[(Postgres)]
+    Bus[(Kafka)]
+  end
+
+  CDN --> WAF --> LB --> UI
+  UI --> API
+  API --> Cache
+  API --> DB
+  API --> Bus
+  Worker --> Bus
+  Worker --> DB
