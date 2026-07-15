@@ -1,203 +1,208 @@
 # dac - Diagrams as Code
 
+> **All-in-one diagram-as-code playground**: Python diagrams, PlantUML, Mermaid, Graphviz & D2 in one Docker container. Zero setup complexity. Perfect for architecture docs, CI/CD pipelines, and infrastructure visualization.
+
 `dac` is a compact diagram-as-code playground with a single Docker-based workflow.
 
-It currently supports these engines:
-
-- Python `diagrams`
-- PlantUML
-- Mermaid
-- Graphviz DOT
-- D2
-
-There is also a C4 PlantUML example using the standard C4 include files.
-
-## Why this repo exists
-
-The goal is to keep the workflow small:
-
-- one container
-- one `Makefile`
-- sample inputs for easy, medium, and complex diagrams
-- render outputs written to `./output`
-
-## Quickstart
-
-Build and start the renderer container:
+## ⚡ Quick Start (30 seconds)
 
 ```bash
+# Build the container
 make run-container
-```
 
-Run a quick environment check:
-
-```bash
+# Verify everything works
 make doctor
+
+# Render all examples
+make render-all
+
+# View outputs in ./output
 ```
 
-List bundled examples and output locations:
+That's it! All diagram engines ready to go.
 
-```bash
-make list
-```
+## 🎯 Why dac?
 
-Render a single example with the shorthand target:
+| Feature | Benefit |
+|---------|---------|
+| **Single Makefile** | No npm, pip, or complex setup. Just `make`. |
+| **One Docker container** | All 5 engines in one container—no dependencies sprawl. |
+| **Zero configuration** | Works out-of-the-box with curated examples. |
+| **CI/CD ready** | Perfect for automated architecture documentation pipelines. |
+| **Engine agnostic** | Learn or switch between tools easily with the same workflow. |
+
+## 📊 Supported Diagram Engines
+
+### Python diagrams
+Best for cloud architecture diagrams driven by Python code.
 
 ```bash
 make render engine=py filename=easy
+make render engine=py filename=medium
+make render engine=py filename=complex
+```
+
+**Examples:**
+- Cloud infrastructure (AWS, GCP, Azure)
+- Microservices architecture
+- Network topology
+
+### PlantUML
+Covers sequence diagrams, component diagrams, deployment diagrams, and more. Includes **C4 model support** with built-in compatibility includes (no external fetches needed).
+
+```bash
 make render engine=puml filename=medium
-make render engine=mermaid filename=complex
-make render engine=dot filename=easy
+make render engine=puml filename=test_c4
+```
+
+**Examples:**
+- Sequence diagrams
+- Component & deployment diagrams
+- C4 architecture models
+
+### Mermaid
+The easiest path for lightweight architecture, flowchart, and sequence diagrams in docs. Renders through Kroki.
+
+```bash
+make render engine=mermaid filename=easy
+```
+
+**Examples:**
+- Architecture diagrams
+- Flowcharts
+- Sequence & state diagrams
+- Great for embedding in Markdown docs
+
+### Graphviz DOT
+Useful when you want direct layout control and a very stable rendering path.
+
+```bash
+make render engine=dot filename=complex
+```
+
+**Examples:**
+- Dependency graphs
+- State machines
+- Custom layouts with precise control
+
+### D2
+A modern diagram scripting language with strong layout and styling support. Outputs both SVG and PNG.
+
+```bash
 make render engine=d2 filename=medium
 ```
 
-Or use the engine-specific targets directly:
+**Examples:**
+- Modern architecture diagrams
+- Entity relationship diagrams
+- Timeline diagrams
 
+## 🚀 Common Workflows
+
+### Render a single diagram
 ```bash
-make generate-py filename=easy inputext=py
-make generate-puml filename=easy inputext=puml
-make generate-mermaid filename=easy inputext=mmd
-make generate-dot filename=easy inputext=dot
-make generate-d2 filename=easy inputext=d2
+make render engine=py filename=easy         # Python
+make render engine=puml filename=medium     # PlantUML
+make render engine=mermaid filename=easy    # Mermaid
+make render engine=dot filename=complex     # Graphviz
+make render engine=d2 filename=medium       # D2
 ```
 
-Render every bundled example:
-
+### Render all examples
 ```bash
 make render-all
 ```
 
-Run the full verification pass:
+### Verify setup
+```bash
+make doctor
+```
+
+### List available examples
+```bash
+make list
+```
+
+### Run full test suite
+```bash
+make test
+```
+
+### Stop the container
+```bash
+make stop-container
+```
+
+## 📂 Project Structure
+
+```
+dac/
+├── diagrams/
+│   ├── py/          # Python diagram examples
+│   ├── uml/         # PlantUML examples (including C4)
+│   ├── mermaid/     # Mermaid examples
+│   ├── dot/         # Graphviz DOT examples
+│   └── d2/          # D2 examples
+├── output/          # Generated PNG/SVG outputs
+├── Makefile         # All build commands
+├── Dockerfile       # Single containerized environment
+└── README.md
+```
+
+## 📤 Output Locations
+
+Rendered diagrams are organized by engine:
+
+- **Python:** `output/py/...`
+- **PlantUML:** `output/uml/...`
+- **Mermaid:** `output/mermaid/...`
+- **Graphviz:** `output/dot/...`
+- **D2:** `output/d2/...` (includes both `.svg` and `.png`)
+
+## 🧪 Testing
 
 ```bash
 make test
 ```
 
-Stop the container:
+The test suite:
+- Renders every example in the repository
+- Verifies expected PNG files exist and are non-empty
+- Validates all 5 engines + C4 PlantUML sample
+- Gives you a quick smoke test for your setup
 
-```bash
-make stop-container
-```
+## 🌐 Use Cases
 
-## Supported diagram types
+- **Architecture Documentation** — Generate diagrams as part of your documentation build
+- **CI/CD Pipelines** — Auto-render diagrams on every commit
+- **Infrastructure as Code** — Visualize your infrastructure definitions
+- **Technical Design Docs** — Create sequence, component, and deployment diagrams
+- **Learning Playground** — Experiment with different diagram engines and syntax
 
-### Python diagrams
+## 📋 What's Included
 
-Python diagrams are best when you want cloud architecture diagrams driven by Python code.
+This repo provides:
+- **5 diagram engines** — compare and choose what works for you
+- **Sample inputs** for easy, medium, and complex diagrams per engine
+- **C4 PlantUML** — industry-standard architecture modeling
+- **Docker containerization** — reproducible environment
+- **Makefile automation** — simple, explicit commands
+- **Comprehensive examples** — from basic to advanced
 
-Example files:
+## 🔧 Requirements
 
-- `diagrams/py/easy.py`
-- `diagrams/py/medium.py`
-- `diagrams/py/complex.py`
-- `diagrams/py/extreme.py`
-- `diagrams/py/consumer.py`
+- Docker
+- Make
+- That's it!
 
-Render:
+## 📝 License
 
-```bash
-make generate-py filename=complex inputext=py
-```
+Creative Commons Zero v1.0 Universal (CC0) — Use freely, no attribution required.
 
-### PlantUML
+## 🤝 Contributing
 
-PlantUML covers sequence diagrams, component diagrams, deployment diagrams, and more.
+Found a bug? Have a great example? Issues and PRs welcome!
 
-Example files:
+---
 
-- `diagrams/uml/easy.puml`
-- `diagrams/uml/medium.puml`
-- `diagrams/uml/complex.puml`
-- `diagrams/uml/extreme.puml`
-- `diagrams/uml/test.uml`
-- `diagrams/uml/test_c4.puml`
-- `diagrams/uml/test_c4_complex_enterprise.puml`
-- `diagrams/uml/test_c4_realtime_dispatch.puml`
-
-Render:
-
-```bash
-make generate-puml filename=complex inputext=puml
-```
-
-The C4 example uses a small local compatibility include so it renders without any external fetches.
-
-### Mermaid
-
-Mermaid is the easiest path for lightweight architecture, flowchart, and sequence diagrams in docs.
-In this repo, Mermaid examples are rendered through Kroki, which keeps the container small and avoids browser setup.
-
-Example files:
-
-- `diagrams/mermaid/easy.mmd`
-- `diagrams/mermaid/medium.mmd`
-- `diagrams/mermaid/complex.mmd`
-- `diagrams/mermaid/extreme.mmd`
-
-Render:
-
-```bash
-make generate-mermaid filename=medium inputext=mmd
-```
-
-### Graphviz DOT
-
-DOT is useful when you want direct layout control and a very stable rendering path.
-
-Example files:
-
-- `diagrams/dot/easy.dot`
-- `diagrams/dot/medium.dot`
-- `diagrams/dot/complex.dot`
-- `diagrams/dot/extreme.dot`
-
-Render:
-
-```bash
-make generate-dot filename=complex inputext=dot
-```
-
-### D2
-
-D2 is a modern diagram scripting language with strong layout and styling support.
-
-Example files:
-
-- `diagrams/d2/easy.d2`
-- `diagrams/d2/medium.d2`
-- `diagrams/d2/complex.d2`
-- `diagrams/d2/extreme.d2`
-
-Render:
-
-```bash
-make generate-d2 filename=easy inputext=d2
-```
-
-## Output layout
-
-Rendered PNGs are written to:
-
-- `output/py/...`
-- `output/uml/...`
-- `output/mermaid/...`
-- `output/dot/...`
-- `output/d2/...`
-
-D2 also keeps the native SVG output next to the PNG preview:
-
-- `output/d2/*.svg`
-- `output/d2/*.png`
-
-## What `make test` checks
-
-`make test` renders every example in the repository and verifies the expected PNG files exist and are non-empty.
-
-That gives you a quick smoke test for:
-
-- Python `diagrams`
-- PlantUML
-- Mermaid
-- Graphviz DOT
-- D2
-- the C4 PlantUML sample
+**Start diagramming now:** `make run-container && make render-all`
