@@ -1,5 +1,9 @@
 # dac - Diagrams as Code
 
+[📚 View Gallery](/dac/gallery.html){: .btn .btn-primary } [🏠 Home](#){: .btn .btn-secondary }
+
+---
+
 Welcome to **dac**, the all-in-one diagram-as-code playground with zero setup complexity.
 
 ## What is dac?
@@ -157,7 +161,7 @@ dac/
 ## Make Targets Reference
 
 | Command | Purpose |
-|---------|---------|
+|---------|----------|
 | `make run-container` | Build and start the Docker container |
 | `make doctor` | Verify all engines work correctly |
 | `make list` | Show available examples |
@@ -231,3 +235,33 @@ Creative Commons Zero v1.0 Universal (CC0) — Use freely with no attribution re
 6. **Integrate into your workflow** — Use `make` targets in docs builds or CI/CD
 
 **Happy diagramming!** 🎨
+
+---
+
+<style>
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 5px 5px 5px 0;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+.btn-primary {
+  background-color: #0366d6;
+  color: white;
+}
+.btn-primary:hover {
+  background-color: #0256ba;
+  text-decoration: none;
+}
+.btn-secondary {
+  background-color: #6f42c1;
+  color: white;
+}
+.btn-secondary:hover {
+  background-color: #5a32a3;
+  text-decoration: none;
+}
+</style>

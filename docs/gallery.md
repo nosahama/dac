@@ -1,15 +1,12 @@
----
-layout: default
-title: Gallery - Diagram Examples
----
-
 # 🎨 Diagram Gallery
+
+[🏠 Home](/dac/){: .btn .btn-secondary } [📚 Gallery](#){: .btn .btn-primary }
+
+---
 
 Explore beautiful examples rendered from each diagram engine. Click on any engine to see what's possible!
 
----
-
-## 📊 Interactive Engine Showcase
+## 🎯 Interactive Engine Showcase
 
 <style>
 .engine-grid {
@@ -76,6 +73,7 @@ Explore beautiful examples rendered from each diagram engine. Click on any engin
   height: 200px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   color: white;
@@ -84,6 +82,12 @@ Explore beautiful examples rendered from each diagram engine. Click on any engin
   padding: 20px;
   box-sizing: border-box;
   font-size: 1.1em;
+}
+
+.example-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .example-info {
@@ -188,6 +192,32 @@ Explore beautiful examples rendered from each diagram engine. Click on any engin
 .feature-list li:last-child {
   border-bottom: none;
 }
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 5px 5px 5px 0;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+.btn-primary {
+  background-color: #0366d6;
+  color: white;
+}
+.btn-primary:hover {
+  background-color: #0256ba;
+  text-decoration: none;
+}
+.btn-secondary {
+  background-color: #6f42c1;
+  color: white;
+}
+.btn-secondary:hover {
+  background-color: #5a32a3;
+  text-decoration: none;
+}
 </style>
 
 <div class="engine-grid">
@@ -241,7 +271,7 @@ Explore beautiful examples rendered from each diagram engine. Click on any engin
 
   <!-- D2 -->
   <div class="engine-card" onclick="switchTab('d2')">
-    <div class="engine-icon">🎯</div>
+    <div class="engine-icon">🏯</div>
     <div class="engine-title">D2</div>
     <div class="engine-desc">Modern syntax with styling</div>
     <div class="feature-list">
@@ -268,33 +298,33 @@ Explore beautiful examples rendered from each diagram engine. Click on any engin
 <div id="python" class="tab-content active">
 ### Python Diagrams Examples
 
-Cloud architecture diagrams created with Python code.
+Cloud architecture diagrams created with Python code. Perfect for visualizing AWS, GCP, and Azure infrastructure.
 
 <div class="example-grid">
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Python Easy<br><span class="complexity-badge easy">Easy</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🐍 Basic Setup<br><span class="complexity-badge easy">Easy</span></div>
     <div class="example-info">
-      <div class="example-name">Basic AWS Architecture</div>
-      <div class="example-type">Simple cloud setup</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <div class="example-name">Simple AWS Setup</div>
+      <div class="example-type">Basic cloud infrastructure</div>
+      <a href="/dac/examples/python-easy.html" class="example-btn">View Example</a>
     </div>
   </div>
   
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">Python Medium<br><span class="complexity-badge medium">Medium</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🐍 Microservices<br><span class="complexity-badge medium">Medium</span></div>
     <div class="example-info">
       <div class="example-name">Microservices Architecture</div>
       <div class="example-type">Multi-tier deployment</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/python-medium.html" class="example-btn">View Example</a>
     </div>
   </div>
   
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">Python Complex<br><span class="complexity-badge complex">Complex</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🐍 Enterprise<br><span class="complexity-badge complex">Complex</span></div>
     <div class="example-info">
       <div class="example-name">Enterprise Infrastructure</div>
       <div class="example-type">Full system architecture</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/python-complex.html" class="example-btn">View Example</a>
     </div>
   </div>
 </div>
@@ -304,33 +334,33 @@ Cloud architecture diagrams created with Python code.
 <div id="plantuml" class="tab-content">
 ### PlantUML Examples
 
-UML diagrams and C4 models for technical documentation.
+UML diagrams and C4 models for technical documentation. Excellent for sequence, component, and deployment diagrams.
 
 <div class="example-grid">
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">PlantUML Easy<br><span class="complexity-badge easy">Easy</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">📊 Classes<br><span class="complexity-badge easy">Easy</span></div>
     <div class="example-info">
       <div class="example-name">Class Diagram</div>
       <div class="example-type">Object-oriented design</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/plantuml-easy.html" class="example-btn">View Example</a>
     </div>
   </div>
   
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">PlantUML Medium<br><span class="complexity-badge medium">Medium</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">📊 Sequences<br><span class="complexity-badge medium">Medium</span></div>
     <div class="example-info">
       <div class="example-name">Sequence Diagram</div>
       <div class="example-type">System interactions</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/plantuml-medium.html" class="example-btn">View Example</a>
     </div>
   </div>
   
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);">C4 Model<br><span class="complexity-badge complex">Complex</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);">📊 C4 Model<br><span class="complexity-badge complex">Complex</span></div>
     <div class="example-info">
       <div class="example-name">C4 Architecture Model</div>
       <div class="example-type">Enterprise architecture</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/plantuml-c4.html" class="example-btn">View Example</a>
     </div>
   </div>
 </div>
@@ -340,33 +370,33 @@ UML diagrams and C4 models for technical documentation.
 <div id="mermaid" class="tab-content">
 ### Mermaid Examples
 
-Modern, lightweight diagrams perfect for documentation.
+Modern, lightweight diagrams perfect for documentation. Great for quick sketches and markdown integration.
 
 <div class="example-grid">
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Mermaid Easy<br><span class="complexity-badge easy">Easy</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🧠 Flow<br><span class="complexity-badge easy">Easy</span></div>
     <div class="example-info">
       <div class="example-name">Flowchart</div>
       <div class="example-type">Process flow</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/mermaid-easy.html" class="example-btn">View Example</a>
     </div>
   </div>
   
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">Mermaid Medium<br><span class="complexity-badge medium">Medium</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🧠 States<br><span class="complexity-badge medium">Medium</span></div>
     <div class="example-info">
       <div class="example-name">State Diagram</div>
       <div class="example-type">System states</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/mermaid-medium.html" class="example-btn">View Example</a>
     </div>
   </div>
   
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">Mermaid Complex<br><span class="complexity-badge complex">Complex</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🧠 Complex<br><span class="complexity-badge complex">Complex</span></div>
     <div class="example-info">
       <div class="example-name">Sequence & Architecture</div>
       <div class="example-type">Combined diagrams</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/mermaid-complex.html" class="example-btn">View Example</a>
     </div>
   </div>
 </div>
@@ -376,33 +406,33 @@ Modern, lightweight diagrams perfect for documentation.
 <div id="graphviz" class="tab-content">
 ### Graphviz DOT Examples
 
-Precise control with powerful layout algorithms.
+Precise control with powerful layout algorithms. Perfect for dependency graphs and state machines.
 
 <div class="example-grid">
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">Graphviz Easy<br><span class="complexity-badge easy">Easy</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🕸️ Graphs<br><span class="complexity-badge easy">Easy</span></div>
     <div class="example-info">
       <div class="example-name">Simple Graph</div>
       <div class="example-type">Node relationships</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/graphviz-easy.html" class="example-btn">View Example</a>
     </div>
   </div>
   
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">Graphviz Medium<br><span class="complexity-badge medium">Medium</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">🕸️ Dependencies<br><span class="complexity-badge medium">Medium</span></div>
     <div class="example-info">
       <div class="example-name">Dependency Graph</div>
       <div class="example-type">Module relationships</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/graphviz-medium.html" class="example-btn">View Example</a>
     </div>
   </div>
   
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);">Graphviz Complex<br><span class="complexity-badge complex">Complex</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);">🕸️ State<br><span class="complexity-badge complex">Complex</span></div>
     <div class="example-info">
       <div class="example-name">State Machine</div>
       <div class="example-type">Complex flows</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/graphviz-complex.html" class="example-btn">View Example</a>
     </div>
   </div>
 </div>
@@ -412,33 +442,33 @@ Precise control with powerful layout algorithms.
 <div id="d2" class="tab-content">
 ### D2 Examples
 
-Modern syntax with beautiful default styling.
+Modern syntax with beautiful default styling. Great for creating professional-looking diagrams with minimal effort.
 
 <div class="example-grid">
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">D2 Easy<br><span class="complexity-badge easy">Easy</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🏯 ER<br><span class="complexity-badge easy">Easy</span></div>
     <div class="example-info">
       <div class="example-name">Entity Relationship</div>
       <div class="example-type">Database schema</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/d2-easy.html" class="example-btn">View Example</a>
     </div>
   </div>
   
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">D2 Medium<br><span class="complexity-badge medium">Medium</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🏯 Architecture<br><span class="complexity-badge medium">Medium</span></div>
     <div class="example-info">
       <div class="example-name">System Architecture</div>
       <div class="example-type">Service diagram</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/d2-medium.html" class="example-btn">View Example</a>
     </div>
   </div>
   
   <div class="example-item">
-    <div class="example-thumb" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">D2 Complex<br><span class="complexity-badge complex">Complex</span></div>
+    <div class="example-thumb" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🏯 Timeline<br><span class="complexity-badge complex">Complex</span></div>
     <div class="example-info">
       <div class="example-name">Timeline Diagram</div>
       <div class="example-type">Multi-layer design</div>
-      <a href="#" class="example-btn">View Full Size</a>
+      <a href="/dac/examples/d2-complex.html" class="example-btn">View Example</a>
     </div>
   </div>
 </div>
@@ -477,6 +507,7 @@ All outputs will be in `./output/` directory, ready to use!
 - ✅ Each engine has easy, medium, and complex examples
 - ✅ All examples are production-ready
 - ✅ Run `make test` to verify everything works
+- ✅ Check individual example pages for source code
 
 <script>
 function switchTab(tabName) {
@@ -495,7 +526,7 @@ function switchTab(tabName) {
   }
   
   // Add active class to clicked button
-  if (event && event.target) {
+  if (event && event.target && event.target.classList.contains('tab-btn')) {
     event.target.classList.add('active');
   }
 }
