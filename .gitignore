@@ -1,1 +1,5 @@
+# Allow examples directory in docs (for gallery)
+!docs/examples/
+
+# Keep output directory but don't commit temporary renders
 output/
