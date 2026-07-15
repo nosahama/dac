@@ -1,0 +1,105 @@
+@startuml
+title C4 — Ride Dispatch Platform (Complex Event-Driven)
+!include /diagrams/uml/c4/C4_Container.puml
+
+left to right direction
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+Person(rider, "Rider", "Searches for rides and tracks status")
+Person(driver, "Driver", "Accepts and performs rides")
+Person(fleetOps, "Fleet Operations", "Incident response and monitoring")
+Person(enterprise, "Fleet Partner", "Enterprise billing and usage reconciliation")
+
+System(riderClient, "Rider App", "Consumer-facing booking application")
+System(driverClient, "Driver App", "Driver onboarding and trip interface")
+System(opsConsole, "Operations Console", "Command, alerts, and intervention")
+
+package "Edge & Security" {
+  Container(cdn, "Global CDN", "Cloud CDN", "Static content and TLS edge")
+  Container(auth, "Identity Service", "Auth0", "Device trust and token issuance")
+  Container(edgeGateway, "Edge Gateway", "Kong", "AuthN, API policy, and throttling")
+  Container(featureFlags, "Feature Flagging", "LaunchDarkly", "Kill switches and runtime rollout")
+}
+
+package "Dispatch Domain" {
+  Container(matchingEngine, "Matching Engine", "Java/Kotlin", "Rider-driver matching and ranking")
+  Container(tripCoordinator, "Trip Orchestrator", "Scala/Akka", "Trip state transitions and compensations")
+  Container(pricing, "Pricing Engine", "Python", "Surge and destination-aware pricing")
+  Container(routePlanner, "Route Planner", "Go", "ETA, routing, and geofencing")
+}
+
+package "Execution Domain" {
+  Container(driverProfile, "Driver Service", "Node.js", "Availability, documents, and reputation")
+  Container(telemetryIngest, "Telemetry Ingest", "Rust", "Location validation and stream normalization")
+  Container(eventStream, "Trip Event Stream", "Kafka", "Location, lifecycle, and fare events")
+  Container(notificationHub, "Notification Hub", "Node.js", "Push/SMS/WebSocket fan-out")
+}
+
+package "Data & Insights" {
+  Container(analyticsLake, "Operational Data Lake", "S3", "Raw historical event archive")
+  Container(realTimeStore, "Feature Store", "Redis", "Driver/rider context and current state")
+  Container(analyticsWarehouse, "Analytics Warehouse", "ClickHouse", "SLA and latency reporting")
+}
+
+package "External Dependencies" {
+  System(mapping, "Maps API", "Geocoding and ETA routing")
+  System(weather, "Weather Service", "ETA and routing risk signals")
+  System(payments, "Payments Processor", "Fare settlements")
+  System(insurance, "Insurance Provider", "Trip risk and incident workflows")
+  System(emergency, "Emergency Network", "Critical response handoff")
+}
+
+Rel(rider, riderClient, "Search rides and manage trips", "HTTPS")
+Rel(driver, driverClient, "Accept rides and stream status", "HTTPS/WebSocket")
+Rel(enterprise, riderClient, "Corporate trip reporting", "SFTP/API")
+Rel(fleetOps, opsConsole, "Monitor incidents and overrides", "HTTPS")
+
+Rel(riderClient, cdn, "Load application bundles", "TLS")
+Rel(driverClient, cdn, "Load driver app assets", "TLS")
+Rel(riderClient, edgeGateway, "Signed API calls", "HTTPS")
+Rel(driverClient, edgeGateway, "Driver actions and telemetry", "HTTPS/WebSocket")
+Rel(opsConsole, edgeGateway, "Administrative trip controls", "HTTPS")
+Rel(edgeGateway, auth, "Validate identity tokens", "OIDC")
+Rel(auth, edgeGateway, "Token introspection and scopes", "OAuth2")
+
+Rel(edgeGateway, matchingEngine, "Dispatch requests", "gRPC")
+Rel(edgeGateway, tripCoordinator, "Trip command channel", "REST")
+Rel(edgeGateway, pricing, "Live fare quoting", "REST")
+Rel(edgeGateway, routePlanner, "Geo-aware routing precheck", "REST")
+Rel(matchingEngine, driverProfile, "Query availability and ratings", "REST")
+Rel(matchingEngine, routePlanner, "Candidate travel-time constraints", "gRPC")
+Rel(matchingEngine, tripCoordinator, "Match outcomes", "RabbitMQ")
+Rel(pricing, tripCoordinator, "Dynamic fare calculation results", "gRPC")
+Rel(routePlanner, tripCoordinator, "ETA checkpoints", "REST")
+Rel(routePlanner, mapping, "Path and traffic lookups", "REST")
+Rel(routePlanner, weather, "Route risk signals", "REST")
+
+Rel(tripCoordinator, eventStream, "Trip state events and fare events", "Kafka")
+Rel(tripCoordinator, driverProfile, "Set driver lock and assignment", "REST")
+Rel(driverProfile, tripCoordinator, "Availability and compliance updates", "REST")
+Rel(telemetryIngest, eventStream, "Normalized location updates", "Kafka")
+Rel(telemetryIngest, tripCoordinator, "Realtime geo anomalies", "Kafka")
+Rel(eventStream, notificationHub, "Push status and ETA changes", "Kafka")
+Rel(notificationHub, rider, "Ride progress and ETA updates", "Push/WebSocket")
+Rel(notificationHub, driver, "Trip alerts and map updates", "Push")
+Rel(notificationHub, fleetOps, "Escalations and manual intervention", "SMS")
+Rel(tripCoordinator, payments, "Capture fare and post-trip settlement", "Webhook")
+
+Rel(analyticsLake, analyticsWarehouse, "Batch analytics and quality checks", "ETL")
+Rel(eventStream, analyticsLake, "Archive raw events", "S3 Sync")
+Rel(eventStream, realTimeStore, "Update hot-state features", "Kafka")
+Rel(realTimeStore, matchingEngine, "Candidate ranking features", "Redis")
+Rel(realTimeStore, pricing, "Historical ride multipliers", "Redis")
+Rel(analyticsWarehouse, fleetOps, "SLA and incident dashboards", "BI API")
+Rel(analyticsWarehouse, enterprise, "Billing and reconciliation exports", "CSV/API")
+Rel(eventStream, insurance, "Incident payload forwarding", "HTTPS")
+Rel(emergency, notificationHub, "Critical incident alerts", "Webhook")
+
+legend
+  | Legend |
+  | <<person>> | Human actor |
+  | <<system>> | Actor-facing system |
+  | <<container>> | Internal platform container |
+endlegend
+@enduml

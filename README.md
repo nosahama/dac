@@ -90,6 +90,7 @@ Example files:
 - `diagrams/py/easy.py`
 - `diagrams/py/medium.py`
 - `diagrams/py/complex.py`
+- `diagrams/py/extreme.py`
 - `diagrams/py/consumer.py`
 
 Render:
@@ -107,8 +108,11 @@ Example files:
 - `diagrams/uml/easy.puml`
 - `diagrams/uml/medium.puml`
 - `diagrams/uml/complex.puml`
+- `diagrams/uml/extreme.puml`
 - `diagrams/uml/test.uml`
 - `diagrams/uml/test_c4.puml`
+- `diagrams/uml/test_c4_complex_enterprise.puml`
+- `diagrams/uml/test_c4_realtime_dispatch.puml`
 
 Render:
 
@@ -128,6 +132,7 @@ Example files:
 - `diagrams/mermaid/easy.mmd`
 - `diagrams/mermaid/medium.mmd`
 - `diagrams/mermaid/complex.mmd`
+- `diagrams/mermaid/extreme.mmd`
 
 Render:
 
@@ -144,6 +149,7 @@ Example files:
 - `diagrams/dot/easy.dot`
 - `diagrams/dot/medium.dot`
 - `diagrams/dot/complex.dot`
+- `diagrams/dot/extreme.dot`
 
 Render:
 
@@ -160,6 +166,7 @@ Example files:
 - `diagrams/d2/easy.d2`
 - `diagrams/d2/medium.d2`
 - `diagrams/d2/complex.d2`
+- `diagrams/d2/extreme.d2`
 
 Render:
 

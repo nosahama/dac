@@ -1,0 +1,156 @@
+digraph G {
+  rankdir=LR;
+  compound=true;
+  nodesep=0.6;
+  ranksep=0.8;
+  splines=ortho;
+
+  node [shape=box, style=filled, fontname="Helvetica", fillcolor="#ffffff"];
+  edge [fontname="Helvetica", fontsize=10];
+
+  subgraph cluster_external {
+    label="External Consumers";
+    style="rounded,filled";
+    color="#fde2e2";
+    user [label="Users", shape=ellipse, fillcolor="#ffeaea"];
+    partner [label="Partners", shape=ellipse, fillcolor="#ffeaea"];
+    ops [label="Ops Console", shape=ellipse, fillcolor="#ffeaea"];
+  }
+
+  subgraph cluster_edge {
+    label="Edge Controls";
+    style="rounded,filled";
+    color="#e4ebff";
+    dns [label="DNS", shape=box];
+    cdn [label="CDN", shape=box];
+    waf [label="Edge WAF", shape=box];
+    gateway [label="API Gateway", shape=box];
+    auth [label="Auth / OAuth", shape=box];
+  }
+
+  subgraph cluster_services {
+    label="Core Microservices";
+    style="rounded,filled";
+    color="#e7f6ea";
+    api [label="Public API", shape=box];
+    catalog [label="Catalog Service", shape=box];
+    cart [label="Cart Service", shape=box];
+    order [label="Order Service", shape=box];
+    payment [label="Payment Service", shape=box];
+    inventory [label="Inventory Service", shape=box];
+    fulfillment [label="Fulfillment Service", shape=box];
+    pricing [label="Pricing Service", shape=box];
+    notify [label="Notification Service", shape=box];
+  }
+
+  subgraph cluster_workflows {
+    label="Event & Async Processing";
+    style="rounded,filled";
+    color="#fff3e0";
+    queue [label="Command Queue", shape=ellipse];
+    bus [label="Kafka Bus", shape=ellipse];
+    policy [label="Policy Engine", shape=box];
+    risk [label="Fraud Risk", shape=box];
+    etl [label="ETL Workers", shape=box];
+    search [label="Search Indexer", shape=box];
+  }
+
+  subgraph cluster_data {
+    label="Data Stores";
+    style="rounded,filled";
+    color="#f2f1ff";
+    usersDb [label="Users DB", shape=cylinder];
+    orderDb [label="Orders DB", shape=cylinder];
+    invDb [label="Inventory DB", shape=cylinder];
+    payDb [label="Payments DB", shape=cylinder];
+    profileDb [label="Profile DB", shape=cylinder];
+    archive [label="Event Archive", shape=box];
+    streamStore [label="Streaming Store", shape=box];
+    warehouse [label="Analytics DW", shape=cylinder];
+  }
+
+  subgraph cluster_external_deps {
+    label="Third-Party Integrations";
+    style="rounded,filled";
+    color="#f7ecff";
+    maps [label="Maps API", shape=box];
+    tax [label="Tax Engine", shape=box];
+    carrier [label="Carrier API", shape=box];
+    acquirer [label="Payment Gateway", shape=box];
+    messaging [label="Messaging Gateway", shape=box];
+  }
+
+  subgraph cluster_observability {
+    label="Observability";
+    style="rounded,filled";
+    color="#e7e7e7";
+    tracing [label="Tracing", shape=box];
+    metrics [label="Metrics", shape=box];
+    alerts [label="Alerting", shape=box];
+  }
+
+  user -> dns;
+  partner -> gateway [label="partner calls"];
+  ops -> gateway [label="admin config", style=dashed];
+
+  user -> cdn [label="HTTP"];
+  cdn -> waf [label="policy checks"];
+  waf -> gateway [label="rate control"];
+  gateway -> auth [label="authorize"];
+  auth -> api [label="JWT"];
+
+  api -> catalog [label="lookup product"];
+  api -> cart [label="cart operations"];
+  api -> order [label="create order"];
+  api -> payment [label="initiate payment"];
+
+  catalog -> usersDb [label="preferences"];
+  catalog -> price [label="catalog sync"];
+  cart -> inventory [label="availability"];
+  cart -> order [label="reserve"];
+  order -> inventory [label="reserve/release"];
+  order -> usersDb [label="customer state"];
+  order -> orderDb [label="persist order"];
+  order -> notify [label="status event"];
+  payment -> payDb [label="ledger write"];
+  fulfillment -> carrier [label="create shipment"];
+  fulfillment -> order [label="status callbacks"];
+  pricing -> usersDb [label="segment"];
+  pricing -> maps [label="distance/zone"];
+
+  order -> queue [label="order events"];
+  payment -> queue [label="payment events"];
+  fulfillment -> queue [label="fulfillment events"];
+  queue -> bus [label="event fanout"];
+
+  bus -> policy [label="policy decisions"];
+  bus -> risk [label="fraud checks"];
+  bus -> etl [label="raw events"];
+  bus -> search [label="index updates"];
+  bus -> streamStore [label="append-only log"];
+  bus -> archive [label="cold storage"];
+
+  policy -> order [label="route actions"];
+  policy -> inventory [label="locks/unlocks"];
+  risk -> payment [label="approve/decline"];
+  etl -> warehouse [label="transform/load"];
+  search -> catalog [label="reindex catalog"];
+
+  order -> acquirer [label="capture"];
+  payment -> tax [label="tax calc"];
+  fulfillment -> tax [label="taxable line items"];
+  notify -> messaging [label="send"];
+  messaging -> user [label="status alerts"];
+
+  api -> tracing [label="span"];
+  policy -> tracing;
+  risk -> tracing;
+  etl -> metrics [label="batch gauges"];
+  archive -> alerts [label="pipeline alerts"];
+  metrics -> alerts [label="thresholds"];
+  alerts -> ops [label="ticket"];
+
+  notify -> warehouse [label="campaign outcomes"];
+  cart -> usersDb [label="behavior signals"];
+  partner -> warehouse [label="reconciliation"];
+}

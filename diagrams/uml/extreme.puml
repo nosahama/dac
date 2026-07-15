@@ -1,0 +1,132 @@
+@startuml
+title Extreme Multi-Region Healthcare Platform
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam packageStyle rectangle
+left to right direction
+
+actor Patient
+actor Clinician
+actor "Billing Partner" as BillingPartner
+actor "Operations Team" as Ops
+
+cloud "Internet" as internet
+
+package "Edge" {
+  [API Gateway] as gateway
+  [Identity Provider] as idp
+  [CDN] as cdn
+}
+
+package "Platform Core" as platform {
+  [Patient Portal] as portal
+  [Clinician Portal] as clinicianPortal
+  [Patient Records API] as records
+  [Scheduling API] as scheduling
+  [Orders API] as orders
+  [Notification API] as notifications
+  [Billing API] as billing
+  [Machine Learning API] as ml
+}
+
+package "Data Plane" {
+  database "Clinical DB" as clinicalDb
+  database "Identity DB" as identityDb
+  database "Audit DB" as auditDb
+  database "Billing DB" as billingDb
+  queue "Event Bus" as eventBus
+  component "Search Index" as search
+}
+
+package "Execution Plane" {
+  component "Eligibility Service" as eligibility
+  component "Rules Engine" as rules
+  component "Referral Service" as referral
+  component "Claims Processor" as claims
+  component "EHR Adapter" as ehrAdapter
+}
+
+package "Integration Layer" {
+  [Lab Results Provider] as labs
+  [Pharmacy Partner] as pharmacy
+  [Insurance Gateway] as insurance
+  [Video Conferencing] as videocall
+}
+
+package "Observability" {
+  [Trace Service] as trace
+  [Metrics] as metrics
+  [Alerting] as alerting
+}
+
+internet --> cdn
+cdn --> gateway
+gateway --> idp
+gateway --> portal
+gateway --> clinicianPortal
+gateway --> records
+gateway --> scheduling
+gateway --> orders
+gateway --> notifications
+gateway --> billing
+gateway --> ml
+
+Patient --> internet : "Use portal"
+Patient --> cdn : "HTTPS"
+Clinician --> clinicianPortal : "Secure login"
+BillingPartner --> billing : "Reconciliation APIs"
+Ops --> portal : "Runbooks"
+
+portal --> idp : "OAuth/OIDC"
+clinicianPortal --> idp : "OAuth/OIDC"
+records --> clinicalDb : "Read/write patient data"
+records --> auditDb : "Write audit event"
+scheduling --> clinicalDb : "Appointments"
+scheduling --> eventBus : "Booking events"
+orders --> billing : "Create billable order"
+orders --> referral : "Referral check"
+orders --> identityDb : "Identity enrichment"
+
+notifications --> search : "Audience resolution"
+notifications --> trace : "Delivery spans"
+billing --> billingDb : "Invoices, claims"
+billing --> insurance : "Authorization and claims"
+billing --> claims : "Cost rules"
+
+ml --> clinicalDb : "Feature reads"
+ml --> billingDb : "Cost patterns"
+ml --> eventBus : "Model signals"
+
+eligibility --> identityDb : "Eligibility lookups"
+eligibility --> rules : "Policy input"
+rules --> claims : "Eligibility outcomes"
+rules --> eventBus : "Policy events"
+referral --> clinicalDb : "Referral history"
+referral --> portal : "Appointment suggestions"
+ehrAdapter --> labs : "Lab order sync"
+ehrAdapter --> clinicalDb : "FHIR payload"
+
+eventBus --> trace : "Cross-domain correlation"
+eventBus --> metrics : "Throughput counters"
+metrics --> alerting : "SLO thresholds"
+alerting --> Ops : "Incident pages"
+Ops --> alerting : "Acknowledgments"
+
+labs -> videocall : "Result view"
+insurance --> claims : "Policy decisions"
+labs --> ehrAdapter : "Result callbacks"
+pharmacy --> orders : "Order and ship status"
+pharmacy --> notifications : "Delivery events"
+videocall --> clinicianPortal : "Session scheduling"
+videocall --> trace : "RTC metrics"
+
+trace --> metrics : "Latency/correlation"
+trace --> auditDb : "Trace metadata"
+portal --> trace : "Session tracing"
+clinicianPortal --> trace : "Session tracing"
+
+note top of platform
+  All patient-facing traffic enters through the API Gateway
+  and is normalized by shared identity and event-driven services.
+end note
+@enduml

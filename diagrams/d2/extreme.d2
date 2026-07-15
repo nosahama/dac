@@ -1,0 +1,159 @@
+direction: right
+
+title: Extreme Event-Driven Commerce Platform
+
+edge: {
+  style.stroke: "#3f73b8"
+}
+
+clients: {
+  direction: right
+  shopper: Shopper Portal {
+    type: "web"
+  }
+  mobile: Mobile App
+  partner: Partner API
+  operators: Operations Console
+}
+
+edge: {
+  direction: right
+  dns: DNS
+  cdn: CDN
+  gateway: API Gateway
+  auth: Auth Service
+}
+
+services: {
+  direction: down
+  catalog: Catalog Service
+  cart: Cart Service
+  order: Order Service
+  payment: Payment Service
+  fulfillment: Fulfillment Service
+  pricing: Pricing Service
+  notification: Notification Service
+}
+
+platform: {
+  direction: down
+  orchestration: Orchestrator
+  fraud: Fraud Engine
+  policy: Policy Engine
+  workflow: Workflow Engine
+  search: Search Service
+  analytics: Analytics API
+}
+
+data: {
+  direction: down
+  users: User Profiles
+  inventory: Inventory DB {
+    shape: cylinder
+  }
+  orders: Orders DB {
+    shape: cylinder
+  }
+  billing: Billing DB {
+    shape: cylinder
+  }
+  cache: Redis State {
+    shape: cylinder
+  }
+  archive: Event Archive {
+    shape: cylinder
+  }
+  bus: Event Bus {
+    shape: hexagon
+  }
+}
+
+workers: {
+  direction: down
+  etl: ETL Pipelines
+  recommender: Recommender Model
+  monitor: Monitoring & Alerting
+  tracing: Trace Collector
+}
+
+external: {
+  direction: down
+  maps: Maps Provider
+  tax: Tax Engine
+  cards: Payment Gateway
+  sms: Messaging Gateway
+  carrier: Carrier API
+}
+
+clients.shopper -> edge.dns: "browse, search"
+clients.mobile -> edge.dns: "track, buy"
+clients.partner -> edge.gateway: "B2B API"
+clients.operators -> services.orchestration: "intervene"
+
+edge.dns -> edge.cdn: HTTPS
+edge.cdn -> edge.gateway: route
+edge.gateway -> edge.auth: auth+throttle
+
+edge.auth -> services.catalog: "read+write"
+edge.auth -> services.cart: "token claims"
+edge.auth -> services.order: "identity"
+
+services.catalog -> data.cache: "write"
+services.catalog -> services.search: "index payload"
+services.catalog -> data.orders: "metadata"
+services.cart -> data.inventory: "reserve"
+services.cart -> services.order: "checkout start"
+
+services.order -> services.payment: "charge request"
+services.order -> data.orders: "persist"
+services.order -> data.users: "account lookup"
+services.order -> platform.fraud: "risk profile"
+services.order -> platform.policy: "state transition"
+
+services.payment -> external.cards: "capture"
+services.payment -> data.billing: "ledger"
+services.payment -> platform.fraud: "verify"
+services.payment -> platform.workflow: "compensation"
+
+services.fulfillment -> data.inventory: "reserve / release"
+services.fulfillment -> data.archive: "immutable events"
+services.fulfillment -> external.carrier: "labels + tracking"
+services.fulfillment -> services.notification: "status pushes"
+
+services.pricing -> data.inventory: "availability weight"
+services.pricing -> external.maps: "distance"
+services.pricing -> external.tax: "jurisdiction"
+services.pricing -> data.cache: "features"
+
+platform.fraud -> services.payment: "decision"
+platform.fraud -> services.order: "manual review"
+platform.policy -> services.fulfillment: "routing policy"
+platform.policy -> data.cache: "rules"
+platform.policy -> services.catalog: "promotion logic"
+
+platform.workflow -> data.bus: "commands"
+platform.search -> data.bus: "search updates"
+platform.analytics -> data.archive: "raw data"
+platform.analytics -> workers.etl: "metrics + features"
+
+services.notification -> external.sms: "alerts"
+clients.shopper -> services.notification: "opt-in"
+services.notification -> clients.shopper: "delivery updates"
+
+data.bus -> workers.recommender: train
+data.bus -> workers.etl: transform
+data.bus -> platform.workflow: events
+data.bus -> workers.monitor: anomaly detection
+
+workers.recommender -> services.catalog: rank updates
+workers.recommender -> services.pricing: dynamic params
+workers.etl -> data.orders: aggregates
+workers.etl -> data.billing: summaries
+workers.etl -> data.archive: retention
+workers.monitor -> clients.operators: alerts
+workers.monitor -> workers.tracing: incident metadata
+workers.tracing -> clients.operators: dashboards
+
+external.carrier -> services.fulfillment: tracking callbacks
+external.tax -> services.payment: tax adjustments
+external.maps -> services.pricing: zone modifiers

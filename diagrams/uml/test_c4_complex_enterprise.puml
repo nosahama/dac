@@ -1,0 +1,91 @@
+@startuml
+title C4 — Digital Commerce Platform (Complex)
+!include /diagrams/uml/c4/C4_Container.puml
+
+left to right direction
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+Person(customer, "Customer", "Shoppers browse and complete purchases")
+Person(vendorOps, "Vendor Operations", "Manages catalog and fulfillment configuration")
+Person(ops, "Operations Analyst", "Monitors incidents and fulfillment KPIs")
+
+System(webPortal, "Web Storefront", "Consumer shopping interface")
+System(mobileApp, "Mobile App", "Native and responsive catalog browsing")
+System(vendorPortal, "Vendor Portal", "Supplier onboarding and inventory publishing")
+
+package "Platform Core" {
+  Container(apiGateway, "API Gateway", "Kong", "Routing, auth, and rate limiting")
+  Container(authService, "Auth Service", "Spring Boot", "JWT issuance, RBAC, and SSO")
+  Container(productService, "Catalog Service", "Node.js", "Catalog, pricing, and promotion rules")
+  Container(orderService, "Order Service", "Java", "Order orchestration and lifecycle state")
+  Container(paymentService, "Payment Service", "Go", "Authorizations, captures, and refunds")
+  Container(inventoryService, "Inventory Service", "Python", "Stock reservation and reconciliation")
+  Container(notificationService, "Notification Service", "Node.js", "Email/SMS/push transactional messages")
+  Container(searchService, "Search Service", "Elasticsearch", "Catalog search and relevance ranking")
+  Container(recommendationService, "Recommendation Service", "Python/ML", "Personalized product ranking")
+  Container(fraudService, "Fraud Service", "Python", "Real-time transaction and fraud scoring")
+  Container(eventBus, "Event Bus", "Kafka", "Domain events and stream routing")
+}
+
+package "Data & Analytics" {
+  Container(profileDb, "Customer Profile DB", "PostgreSQL", "Profiles, preferences, and loyalty tiers")
+  Container(orderDb, "Order DB", "Cassandra", "Order history and fulfillment state")
+  Container(eventStore, "Data Lake", "S3", "Raw and canonical event history")
+  Container(analyticsWarehouse, "Analytics Warehouse", "Snowflake", "BI dashboards and anomaly detection")
+}
+
+package "External Systems" {
+  System(paymentGateway, "Payment Gateway", "PCI-compliant card, wallet, and bank processing")
+  System(shippingProvider, "Shipping Partner", "Carrier labels, tracking, and shipment lifecycle")
+  System(taxEngine, "Tax Engine", "Jurisdiction-aware tax calculations")
+  System(contentCms, "Content CMS", "Marketing content and campaign assets")
+}
+
+Rel(customer, webPortal, "Browse and place orders", "HTTPS")
+Rel(customer, mobileApp, "Browse, track, and manage orders", "HTTPS")
+Rel(vendorOps, vendorPortal, "Publish products and capacity", "HTTPS")
+Rel(ops, vendorPortal, "Operational onboarding and exception handling", "HTTPS")
+
+Rel(webPortal, apiGateway, "Use authenticated APIs", "REST")
+Rel(mobileApp, apiGateway, "Use authenticated APIs", "REST")
+Rel(vendorPortal, apiGateway, "Partner integration API", "HTTPS + OAuth")
+Rel(apiGateway, authService, "Authenticate sessions and tokens", "OAuth2/OIDC")
+Rel(apiGateway, productService, "Catalog reads/writes", "REST")
+Rel(apiGateway, orderService, "Place/cancel/modify orders", "REST")
+Rel(apiGateway, searchService, "Product search and suggestions", "REST")
+Rel(apiGateway, notificationService, "Delivery preferences", "REST")
+Rel(apiGateway, recommendationService, "Request ranked recommendations", "REST")
+Rel(apiGateway, fraudService, "Risk checks before checkout", "gRPC")
+Rel(orderService, paymentService, "Collect authorization data", "gRPC")
+Rel(paymentService, paymentGateway, "Authorize and capture payments", "PCI API")
+Rel(paymentService, orderService, "Payment outcomes", "Webhook")
+
+Rel(orderService, inventoryService, "Reserve / release inventory", "gRPC")
+Rel(inventoryService, vendorPortal, "Supplier inventory updates", "CSV/REST")
+Rel(orderService, eventBus, "Emit order lifecycle events", "Kafka")
+Rel(eventBus, analyticsWarehouse, "Event sink for analytics", "Kafka Connect")
+Rel(eventBus, eventStore, "Archive complete audit trail", "S3 Sync")
+Rel(eventBus, profileDb, "Update profile activity metrics", "SQL")
+
+Rel(orderService, orderDb, "Persist orders and state transitions", "CQL")
+Rel(productService, profileDb, "Read preference + segment details", "SQL")
+Rel(recommendationService, profileDb, "Context and feature loading", "SQL")
+Rel(recommendationService, analyticsWarehouse, "Training feedback loops", "Batch ETL")
+Rel(searchService, contentCms, "Campaign and merchandising metadata", "REST")
+Rel(orderService, shippingProvider, "Create labels and tracking entries", "REST")
+Rel(notificationService, shippingProvider, "Receive tracking events", "Webhook")
+Rel(notificationService, shippingProvider, "Track shipment ETA updates", "Webhook")
+Rel(orderService, taxEngine, "Tax calculation at checkout", "REST")
+Rel(notificationService, customer, "Delivery status and alerts", "Push/Email/SMS")
+Rel(ops, analyticsWarehouse, "Monitor KPIs and anomalies", "Dashboard")
+Rel(analyticsWarehouse, ops, "Incident and SLA alerts", "Reporting")
+Rel(profileDb, taxEngine, "Address and classification checks", "SQL")
+
+legend
+  | Legend |
+  | <<person>> | External actors |
+  | <<system>> | External/system boundary |
+  | <<container>> | Platform container |
+endlegend
+@enduml

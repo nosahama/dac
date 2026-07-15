@@ -57,7 +57,7 @@ render_d2() {
     "file://$svg_file" >/dev/null 2>&1
 }
 
-for example in easy medium complex; do
+for example in easy medium complex extreme; do
   render_python "$example"
   render_plantuml "$example"
   render_mermaid "$example"
@@ -68,3 +68,5 @@ done
 render_python consumer
 render_plantuml test uml
 render_plantuml test_c4 puml
+render_plantuml test_c4_complex_enterprise puml
+render_plantuml test_c4_realtime_dispatch puml
