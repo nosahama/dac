@@ -1,8 +1,39 @@
+---
+layout: default
+title: "dac - Diagrams as Code"
+---
+
 # dac - Diagrams as Code
 
-[📚 View Gallery](/dac/gallery.html){: .btn .btn-primary } [🏠 Home](#){: .btn .btn-secondary }
+<div class="page-actions">
+  <a href="/dac/gallery.html" class="btn btn-primary">📚 View Gallery</a>
+  <a href="/dac/" class="btn btn-secondary">🏠 Home</a>
+</div>
 
 ---
+
+## Sample Output Snapshots
+
+<div class="sample-output-grid">
+  <a href="/dac/assets/examples/py/easy.png" target="_blank">
+    <img src="/dac/assets/examples/py/easy.png" alt="Python easy output" />
+  </a>
+  <a href="/dac/assets/examples/uml/easy.png" target="_blank">
+    <img src="/dac/assets/examples/uml/easy.png" alt="PlantUML easy output" />
+  </a>
+  <a href="/dac/assets/examples/mermaid/medium.png" target="_blank">
+    <img src="/dac/assets/examples/mermaid/medium.png" alt="Mermaid medium output" />
+  </a>
+  <a href="/dac/assets/examples/dot/medium.png" target="_blank">
+    <img src="/dac/assets/examples/dot/medium.png" alt="Graphviz medium output" />
+  </a>
+  <a href="/dac/assets/examples/py/complex.png" target="_blank">
+    <img src="/dac/assets/examples/py/complex.png" alt="Python complex output" />
+  </a>
+  <a href="/dac/assets/examples/d2/complex.png" target="_blank">
+    <img src="/dac/assets/examples/d2/complex.png" alt="D2 complex output" />
+  </a>
+</div>
 
 Welcome to **dac**, the all-in-one diagram-as-code playground with zero setup complexity.
 
@@ -78,26 +109,6 @@ Open any PNG in `./output/` to see your diagrams!
 ```bash
 make sync-doc-examples
 ```
-
-## Sample Output Snapshots
-
-<div class="sample-output-grid">
-  <a href="/dac/assets/examples/py/easy.png" target="_blank">
-    <img src="/dac/assets/examples/py/easy.png" alt="Python easy output" />
-  </a>
-  <a href="/dac/assets/examples/uml/easy.png" target="_blank">
-    <img src="/dac/assets/examples/uml/easy.png" alt="PlantUML easy output" />
-  </a>
-  <a href="/dac/assets/examples/mermaid/easy.png" target="_blank">
-    <img src="/dac/assets/examples/mermaid/easy.png" alt="Mermaid easy output" />
-  </a>
-  <a href="/dac/assets/examples/dot/easy.png" target="_blank">
-    <img src="/dac/assets/examples/dot/easy.png" alt="Graphviz easy output" />
-  </a>
-  <a href="/dac/assets/examples/d2/easy.png" target="_blank">
-    <img src="/dac/assets/examples/d2/easy.png" alt="D2 easy output" />
-  </a>
-</div>
 
 Want more examples by engine? See [the full gallery](/dac/gallery.html).
 
@@ -372,5 +383,13 @@ Creative Commons Zero v1.0 Universal (CC0) — Use freely with no attribution re
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.page-actions {
+  margin: 0 0 8px;
+}
+
+.page-actions .btn {
+  margin: 0 8px 0 0;
 }
 </style>

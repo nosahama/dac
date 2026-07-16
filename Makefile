@@ -34,7 +34,8 @@ WARN_COLOR=\033[33;01m
 	generate-py generate-puml generate-mermaid generate-dot generate-d2 \
 	diagrams-py diagrams-uml diagrams-mermaid diagrams-dot diagrams-d2 \
 	dac-py dac-uml dac-mermaid dac-dot dac-d2 \
-	render render-all sync-doc-examples refresh-docs list doctor version install install-script install-completion
+	render render-all sync-doc-examples refresh-docs list doctor version install install-script install-completion \
+	docs-build docs-serve
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -51,6 +52,8 @@ help:
 	@echo "  render-all           render every sample example into \$$OUTPUT_HOST_LOCATION (default: ./output)"
 	@echo "  sync-doc-examples    copy rendered PNGs into docs/assets/examples for the site gallery"
 	@echo "  refresh-docs         render all examples, then sync site gallery assets"
+	@echo "  docs-build           build docs with Jekyll (theme + page conversion) using docs/_config.yml"
+	@echo "  docs-serve           run Jekyll preview server at http://localhost:\$${DOCS_PORT:-4000}/"
 	@echo "  test                 render and verify every supported diagram type"
 	@echo "  version              print dac version"
 	@echo "  install              install dac into \$$BINDIR"
@@ -150,6 +153,11 @@ render-all: run-container
 
 DOC_EXAMPLE_ENGINES := py uml mermaid dot d2
 DOC_EXAMPLES_HOST_LOCATION ?= $(PWD)/docs/assets/examples
+DOCS_SOURCE_LOCATION ?= $(PWD)/docs
+DOCS_BUILD_DIRECTORY ?= _site
+DOCS_BASE_URL ?= /dac
+DOCS_HOST ?= 0.0.0.0
+DOCS_PORT ?= 4000
 
 sync-doc-examples:
 	@set -e; \
@@ -163,6 +171,25 @@ sync-doc-examples:
 	done
 
 refresh-docs: render-all sync-doc-examples
+
+docs-build:
+	@mkdir -p "$(DOCS_SOURCE_LOCATION)"
+	@set -e; \
+	docker run --rm \
+		-v "$(DOCS_SOURCE_LOCATION):/srv/jekyll" \
+		-e BASE_URL="$(DOCS_BASE_URL)" \
+		jekyll/jekyll:latest sh -lc 'gem install --no-document jekyll-theme-minimal >/dev/null && \
+			jekyll build --source /srv/jekyll --destination /srv/jekyll/$(DOCS_BUILD_DIRECTORY) --config /srv/jekyll/_config.yml --baseurl "$$BASE_URL" --trace'
+
+docs-serve:
+	@mkdir -p "$(DOCS_SOURCE_LOCATION)"
+	@echo "Serving docs at http://localhost:$(DOCS_PORT)/"
+	@docker run --rm \
+		-v "$(DOCS_SOURCE_LOCATION):/srv/jekyll" \
+		-e BASE_URL="$(DOCS_BASE_URL)" \
+		-p $(DOCS_HOST):$(DOCS_PORT):$(DOCS_PORT) \
+		jekyll/jekyll:latest sh -lc 'gem install --no-document jekyll-theme-minimal >/dev/null && \
+			jekyll serve --host 0.0.0.0 --port $(DOCS_PORT) --source /srv/jekyll --destination /srv/jekyll/$(DOCS_BUILD_DIRECTORY) --config /srv/jekyll/_config.yml --baseurl "$$BASE_URL" --livereload --trace'
 
 test: run-container
 	@set -e; \

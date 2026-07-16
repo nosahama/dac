@@ -1,6 +1,14 @@
+---
+layout: default
+title: "Diagram Gallery - dac"
+---
+
 # 🎨 Diagram Gallery
 
-[🏠 Home](/dac/){: .btn .btn-secondary } [🧭 Engines](/dac/gallery.html#engine-gallery){: .btn .btn-primary }
+<div class="page-actions">
+  <a href="/dac/" class="btn btn-secondary">🏠 Home</a>
+  <a href="/dac/gallery.html#engine-gallery" class="btn btn-primary">🧭 Engines</a>
+</div>
 
 ---
 
@@ -281,5 +289,13 @@ This gallery uses the generated PNG outputs from the project examples and lets y
 .btn-secondary:hover {
   background-color: #5a32a3;
   text-decoration: none;
+}
+
+.page-actions {
+  margin: 0 0 8px;
+}
+
+.page-actions .btn {
+  margin: 0 8px 0 0;
 }
 </style>

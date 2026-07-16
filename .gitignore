@@ -3,3 +3,7 @@
 
 # Keep output directory but don't commit temporary renders
 output/
+
+# Ignore generated site artifacts
+docs/_site/
+docs/_site-gh/

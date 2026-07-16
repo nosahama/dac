@@ -1,3 +1,8 @@
+---
+layout: default
+title: "GitHub Pages Guide - dac"
+---
+
 # GitHub Pages Complete Guide
 
 ## 📖 What is GitHub Pages?
