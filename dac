@@ -1,0 +1,186 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname "$0")" && pwd)"
+REPO_DIR="${DAC_REPO_DIR:-$SCRIPT_DIR}"
+IMAGE_NAME="${DAC_IMAGE_NAME:-dac}"
+VERSION_FILE="${DAC_VERSION_FILE:-$REPO_DIR/VERSION}"
+COMMAND="render"
+VERSION="${DAC_VERSION:-$(cat "$VERSION_FILE" 2>/dev/null || echo 0.1.1)}"
+
+print_help() {
+  cat <<'EOF'
+Usage:
+  dac [command] [options]
+
+Commands:
+  render             Render a single diagram (default)
+  render-all         Render all sample diagrams in the provided source folder
+  test               Run render + verify for sample diagrams in the source folder
+  list               List built-in sample names
+  doctor             Check local and container toolchain prerequisites
+  version            Print tool version
+  help               Show this message
+
+Global options:
+  --source, --source-dir <path>      Host path to root diagram folder (default: ./diagrams)
+  --output, --out, --output-dir <path> Host path to output folder (default: ./output)
+  --engine <py|puml|uml|mermaid|dot|d2> (required for render)
+  --name <name> (required for render)
+  --ext, --inputext <ext>            Engine-specific extension (defaults: py/puml/mmd/dot/d2)
+  --help, -h
+  --version
+
+Examples:
+  dac render --engine puml --name stack --source /opt/projects/stonetoned/bandai/infra --out /opt/projects/labs/output/diagrams
+EOF
+}
+
+if [ "$#" -gt 0 ] && [ "${1#--}" = "$1" ]; then
+  COMMAND="$1"
+  shift
+fi
+
+if [ "$COMMAND" = "help" ]; then
+  print_help
+  exit 0
+fi
+
+if [ "$COMMAND" = "version" ]; then
+  echo "$VERSION"
+  exit 0
+fi
+
+SOURCE_DIR="${DAC_SOURCE_DIR:-./diagrams}"
+OUTPUT_DIR="${DAC_OUTPUT_DIR:-./output}"
+ENGINE=""
+NAME=""
+EXT=""
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --source|--source-dir)
+      [ "$#" -ge 2 ] || { echo "missing --source value" >&2; exit 2; }
+      SOURCE_DIR="$2"
+      shift 2
+      ;;
+    --output|--out|--output-dir)
+      [ "$#" -ge 2 ] || { echo "missing --output value" >&2; exit 2; }
+      OUTPUT_DIR="$2"
+      shift 2
+      ;;
+    --engine|-e)
+      [ "$#" -ge 2 ] || { echo "missing --engine value" >&2; exit 2; }
+      ENGINE="$2"
+      shift 2
+      ;;
+    --name|-n)
+      [ "$#" -ge 2 ] || { echo "missing --name value" >&2; exit 2; }
+      NAME="$2"
+      shift 2
+      ;;
+    --ext|--inputext)
+      [ "$#" -ge 2 ] || { echo "missing --ext value" >&2; exit 2; }
+      EXT="$2"
+      shift 2
+      ;;
+    --help|-h)
+      print_help
+      exit 0
+      ;;
+    --version)
+      echo "$VERSION"
+      exit 0
+      ;;
+    *)
+      echo "unknown flag: $1" >&2
+      print_help
+      exit 2
+      ;;
+  esac
+done
+
+normalize_path() {
+  path="$1"
+  case "$path" in
+    /*) printf '%s\n' "$path" ;;
+    *) (cd "$PWD" && printf '%s/%s\n' "$PWD" "$path") ;;
+  esac
+}
+
+abs_source="$(normalize_path "$SOURCE_DIR")"
+abs_output="$(normalize_path "$OUTPUT_DIR")"
+
+if [ ! -d "$abs_source" ]; then
+  echo "source directory not found: $abs_source" >&2
+  exit 1
+fi
+
+run_container() {
+  make -C "$REPO_DIR" \
+    CONTAINER_NAME="$IMAGE_NAME" \
+    IMAGE_NAME="$IMAGE_NAME" \
+    DIAGRAMS_HOST_LOCATION="$abs_source" \
+    OUTPUT_HOST_LOCATION="$abs_output" \
+    run-container
+}
+
+stop_container() {
+  make -C "$REPO_DIR" \
+    CONTAINER_NAME="$IMAGE_NAME" \
+    stop-container >/dev/null 2>&1 || true
+}
+
+case "$COMMAND" in
+  render|render-all|test|list|doctor|version)
+    ;;
+  *)
+    echo "unknown command: $COMMAND" >&2
+    print_help
+    exit 2
+    ;;
+esac
+
+if [ "$COMMAND" = "render" ]; then
+  if [ -z "$ENGINE" ] || [ -z "$NAME" ]; then
+    echo "--engine and --name are required for render" >&2
+    print_help
+    exit 2
+  fi
+  case "$ENGINE" in
+    py) TARGET_NAME="generate-py"; DEFAULT_EXT="py" ;;
+    puml|uml) TARGET_NAME="generate-puml"; DEFAULT_EXT="puml" ;;
+    mermaid) TARGET_NAME="generate-mermaid"; DEFAULT_EXT="mmd" ;;
+    dot) TARGET_NAME="generate-dot"; DEFAULT_EXT="dot" ;;
+    d2) TARGET_NAME="generate-d2"; DEFAULT_EXT="d2" ;;
+    *) echo "unknown engine: $ENGINE" >&2; exit 2 ;;
+  esac
+  EXT="${EXT:-$DEFAULT_EXT}"
+  trap 'stop_container' EXIT INT TERM
+  run_container >/dev/null
+  make -C "$REPO_DIR" "$TARGET_NAME" \
+    filename="$NAME" \
+    inputext="$EXT" \
+    DIAGRAMS_HOST_LOCATION="$abs_source" \
+    OUTPUT_HOST_LOCATION="$abs_output"
+  exit 0
+fi
+
+if [ "$COMMAND" = "list" ]; then
+  make -C "$REPO_DIR" list
+  exit 0
+fi
+
+if [ "$COMMAND" = "doctor" ]; then
+  make -C "$REPO_DIR" doctor
+  exit 0
+fi
+
+if [ "$COMMAND" = "render-all" ] || [ "$COMMAND" = "test" ]; then
+  trap 'stop_container' EXIT INT TERM
+  run_container >/dev/null
+  make -C "$REPO_DIR" "$COMMAND" \
+    DIAGRAMS_HOST_LOCATION="$abs_source" \
+    OUTPUT_HOST_LOCATION="$abs_output"
+  exit 0
+fi

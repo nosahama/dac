@@ -70,6 +70,83 @@ make render-all
 ### 5. View Results
 Open any PNG in `./output/` to see your diagrams!
 
+### 6. Browse generated examples
+
+[🧭 Engine Gallery](/dac/gallery.html){: .btn .btn-primary }
+[📤 Refresh gallery assets](/dac/gallery.html){: .btn .btn-primary }
+
+```bash
+make sync-doc-examples
+```
+
+## Sample Output Snapshots
+
+<div class="sample-output-grid">
+  <a href="/dac/assets/examples/py/easy.png" target="_blank">
+    <img src="/dac/assets/examples/py/easy.png" alt="Python easy output" />
+  </a>
+  <a href="/dac/assets/examples/uml/easy.png" target="_blank">
+    <img src="/dac/assets/examples/uml/easy.png" alt="PlantUML easy output" />
+  </a>
+  <a href="/dac/assets/examples/mermaid/easy.png" target="_blank">
+    <img src="/dac/assets/examples/mermaid/easy.png" alt="Mermaid easy output" />
+  </a>
+  <a href="/dac/assets/examples/dot/easy.png" target="_blank">
+    <img src="/dac/assets/examples/dot/easy.png" alt="Graphviz easy output" />
+  </a>
+  <a href="/dac/assets/examples/d2/easy.png" target="_blank">
+    <img src="/dac/assets/examples/d2/easy.png" alt="D2 easy output" />
+  </a>
+</div>
+
+Want more examples by engine? See [the full gallery](/dac/gallery.html).
+
+## Install and versioning
+
+```bash
+cat VERSION
+make version
+```
+
+```bash
+make install PREFIX=$HOME/.local
+make install-completion PREFIX=$HOME/.local
+```
+
+## Use this repo as a tool in any project
+
+### Make mode
+
+```bash
+make -C /opt/projects/labs/dac render \
+  DIAGRAMS_HOST_LOCATION=/opt/projects/stonetoned/bandai/infra \
+  OUTPUT_HOST_LOCATION=/tmp/bandai-infra-diagrams \
+  engine=puml \
+  filename=stack \
+  inputext=puml
+```
+
+### CLI mode
+
+```bash
+/opt/projects/labs/dac/dac render \
+  --source /opt/projects/stonetoned/bandai/infra \
+  --engine puml \
+  --name stack \
+  --ext puml \
+  --out /tmp/bandai-infra-diagrams
+```
+
+```bash
+dac --version
+dac version
+```
+
+CLI flags:
+
+- `--source`/`--source-dir` (`--out` / `--output` / `--output-dir`)
+- `--engine`, `--name`, `--ext`
+
 ## Render Individual Diagrams
 
 ### Python Diagrams (Cloud Architecture)
@@ -169,6 +246,23 @@ dac/
 | `make render-all` | Render every example |
 | `make test` | Run full verification suite |
 | `make stop-container` | Stop and clean up container |
+| `make version` | Print version from `VERSION` |
+| `make install` | Install `dac` and shell completions |
+| `make install-completion` | Install only shell completions |
+
+## Installed command options
+
+Once installed (`make install`), `dac` supports:
+
+- `--version` to print version
+- `--help` to show usage
+
+Examples:
+
+```bash
+dac --version
+dac render --source /opt/projects/stonetoned/bandai/infra --engine puml --name stack --ext puml
+```
 
 ## Testing & Verification
 
@@ -263,5 +357,20 @@ Creative Commons Zero v1.0 Universal (CC0) — Use freely with no attribution re
 .btn-secondary:hover {
   background-color: #5a32a3;
   text-decoration: none;
+}
+
+.sample-output-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.sample-output-grid img {
+  width: 100%;
+  max-width: 220px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 </style>

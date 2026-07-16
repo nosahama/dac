@@ -1,0 +1,48 @@
+#compdef dac
+
+_dac() {
+  _arguments -C \
+    '1: :->command' \
+    '*: :->args'
+
+  case $state in
+    command)
+      local -a commands
+      commands=(
+        'render:Render one diagram'
+        'render-all:Render all sample diagrams'
+        'test:Render samples and verify outputs'
+        'list:List sample names'
+        'doctor:Run toolchain checks'
+        'version:Print tool version'
+        'help:Show help'
+      )
+      _describe 'command' commands
+      ;;
+    args)
+      case $line[2] in
+        render)
+          _arguments \
+            '(--source --source-dir)'{-s,--source}'[diagram source dir]:source:_files -/' \
+            '(--output --out --output-dir)'{-o,--output}'[output dir]:outdir:_files -/' \
+            {-e,--engine}'[engine]:engine:(py puml uml mermaid dot d2)' \
+            {-n,--name}'[diagram name]:name:' \
+            '(*--ext|--inputext)[extension]:ext:(py puml mmd dot d2)' \
+            {-h,--help}'[show help]' \
+            {-v,--version}'[show version]'
+          ;;
+        render-all|test|list|doctor)
+          _arguments \
+            '(--source --source-dir)'{-s,--source}'[diagram source dir]:source:_files -/' \
+            '(--output --out --output-dir)'{-o,--output}'[output dir]:outdir:_files -/' \
+            {-h,--help}'[show help]' \
+            {-v,--version}'[show version]'
+          ;;
+        version|help)
+          ;;
+      esac
+      ;;
+  esac
+}
+
+compdef _dac dac

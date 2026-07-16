@@ -5,8 +5,8 @@ engine="${1:-}"
 name="${2:-}"
 ext="${3:-}"
 
-ROOT="${ROOT:-/diagrams}"
-OUTPUT_ROOT="${OUTPUT_ROOT:-/output}"
+ROOT="${ROOT:-${DIAGRAMS_ROOT:-/diagrams}}"
+OUTPUT_ROOT="${OUTPUT_ROOT:-${DAC_OUTPUT_ROOT:-/output}}"
 PLANTUML_JAR="${PLANTUML_JAR:-/jars/plantuml.jar}"
 
 if [ -z "$engine" ] || [ -z "$name" ]; then

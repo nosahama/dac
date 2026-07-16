@@ -1,9 +1,17 @@
 CONTAINER_NAME = dac
 IMAGE_NAME := $(CONTAINER_NAME)
+DAC_VERSION := $(strip $(shell [ -f VERSION ] && cat VERSION || echo 0.1.1))
 
 JAVA_JARS_LOCATION := /jars
 DIAGRAMS_CONTAINER_LOCATION := /diagrams
 OUTPUT_CONTAINER_LOCATION := /output
+DIAGRAMS_HOST_LOCATION ?= $(PWD)/diagrams
+OUTPUT_HOST_LOCATION ?= $(PWD)/output
+
+PREFIX ?= $(HOME)/.local
+BINDIR ?= $(PREFIX)/bin
+BASH_COMPLETION_DIR ?= $(PREFIX)/share/bash-completion/completions
+ZSH_COMPLETION_DIR ?= $(PREFIX)/share/zsh/site-functions
 
 PY_DAC_CONTAINER_LOCATION := $(DIAGRAMS_CONTAINER_LOCATION)/py
 UML_DAC_CONTAINER_LOCATION := $(DIAGRAMS_CONTAINER_LOCATION)/uml
@@ -26,7 +34,7 @@ WARN_COLOR=\033[33;01m
 	generate-py generate-puml generate-mermaid generate-dot generate-d2 \
 	diagrams-py diagrams-uml diagrams-mermaid diagrams-dot diagrams-d2 \
 	dac-py dac-uml dac-mermaid dac-dot dac-d2 \
-	render render-all list doctor
+	render render-all sync-doc-examples refresh-docs list doctor version install install-script install-completion
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -40,8 +48,17 @@ help:
 	@echo "  generate-mermaid     render a Mermaid file: filename=<name> inputext=mmd"
 	@echo "  generate-dot         render a Graphviz DOT file: filename=<name> inputext=dot"
 	@echo "  generate-d2          render a D2 file: filename=<name> inputext=d2"
-	@echo "  render-all           render every sample example into ./output"
+	@echo "  render-all           render every sample example into \$$OUTPUT_HOST_LOCATION (default: ./output)"
+	@echo "  sync-doc-examples    copy rendered PNGs into docs/assets/examples for the site gallery"
+	@echo "  refresh-docs         render all examples, then sync site gallery assets"
 	@echo "  test                 render and verify every supported diagram type"
+	@echo "  version              print dac version"
+	@echo "  install              install dac into \$$BINDIR"
+	@echo "  install-completion   install shell completions"
+	@echo ""
+	@echo "Options"
+	@echo "  DIAGRAMS_HOST_LOCATION  source root for diagrams (default: $(PWD)/diagrams)"
+	@echo "  OUTPUT_HOST_LOCATION    output root for generated images (default: $(PWD)/output)"
 
 setup:
 	docker build -t $(CONTAINER_NAME) .
@@ -66,9 +83,16 @@ doctor:
 		dot -V >/dev/null 2>&1'
 
 run-container: setup
-	@mkdir -p output
+	@if [ ! -d "$(DIAGRAMS_HOST_LOCATION)" ]; then \
+		echo "DIAGRAMS_HOST_LOCATION not found: $(DIAGRAMS_HOST_LOCATION)" >&2; \
+		exit 1; \
+	fi
+	@mkdir -p "$(OUTPUT_HOST_LOCATION)"
 	@docker rm -f $(CONTAINER_NAME) >/dev/null 2>&1 || true
-	docker run -d -v ${PWD}/diagrams:/diagrams -v ${PWD}/output:/output --name $(CONTAINER_NAME) $(IMAGE_NAME)
+	docker run -d \
+		-v "$(DIAGRAMS_HOST_LOCATION):$(DIAGRAMS_CONTAINER_LOCATION)" \
+		-v "$(OUTPUT_HOST_LOCATION):$(OUTPUT_CONTAINER_LOCATION)" \
+		--name $(CONTAINER_NAME) $(IMAGE_NAME)
 
 stop-container:
 	@docker rm -f $(CONTAINER_NAME) >/dev/null 2>&1 || true
@@ -99,13 +123,13 @@ render:
 		echo "usage: make render engine=<py|puml|mermaid|dot|d2> filename=<name> [inputext=<ext>]" >&2; \
 		exit 2; \
 	fi; \
-	$(MAKE) run-container >/dev/null; \
+	$(MAKE) run-container DIAGRAMS_HOST_LOCATION="$(DIAGRAMS_HOST_LOCATION)" OUTPUT_HOST_LOCATION="$(OUTPUT_HOST_LOCATION)" >/dev/null; \
 	case "$(engine)" in \
-		py) ext="$${inputext:-py}"; $(MAKE) generate-py filename=$(filename) inputext="$$ext" ;; \
-		puml|uml) ext="$${inputext:-puml}"; $(MAKE) generate-puml filename=$(filename) inputext="$$ext" ;; \
-		mermaid) ext="$${inputext:-mmd}"; $(MAKE) generate-mermaid filename=$(filename) inputext="$$ext" ;; \
-		dot) ext="$${inputext:-dot}"; $(MAKE) generate-dot filename=$(filename) inputext="$$ext" ;; \
-		d2) ext="$${inputext:-d2}"; $(MAKE) generate-d2 filename=$(filename) inputext="$$ext" ;; \
+		py) ext="$${inputext:-py}"; $(MAKE) generate-py filename=$(filename) inputext="$$ext" DIAGRAMS_HOST_LOCATION="$(DIAGRAMS_HOST_LOCATION)" OUTPUT_HOST_LOCATION="$(OUTPUT_HOST_LOCATION)";; \
+		puml|uml) ext="$${inputext:-puml}"; $(MAKE) generate-puml filename=$(filename) inputext="$$ext" DIAGRAMS_HOST_LOCATION="$(DIAGRAMS_HOST_LOCATION)" OUTPUT_HOST_LOCATION="$(OUTPUT_HOST_LOCATION)";; \
+		mermaid) ext="$${inputext:-mmd}"; $(MAKE) generate-mermaid filename=$(filename) inputext="$$ext" DIAGRAMS_HOST_LOCATION="$(DIAGRAMS_HOST_LOCATION)" OUTPUT_HOST_LOCATION="$(OUTPUT_HOST_LOCATION)";; \
+		dot) ext="$${inputext:-dot}"; $(MAKE) generate-dot filename=$(filename) inputext="$$ext" DIAGRAMS_HOST_LOCATION="$(DIAGRAMS_HOST_LOCATION)" OUTPUT_HOST_LOCATION="$(OUTPUT_HOST_LOCATION)";; \
+		d2) ext="$${inputext:-d2}"; $(MAKE) generate-d2 filename=$(filename) inputext="$$ext" DIAGRAMS_HOST_LOCATION="$(DIAGRAMS_HOST_LOCATION)" OUTPUT_HOST_LOCATION="$(OUTPUT_HOST_LOCATION)";; \
 		*) echo "unknown engine: $(engine)" >&2; exit 2 ;; \
 	esac
 
@@ -124,11 +148,27 @@ dac-d2: generate-d2
 render-all: run-container
 	docker exec -t $(CONTAINER_NAME) sh /scripts/render_examples.sh
 
+DOC_EXAMPLE_ENGINES := py uml mermaid dot d2
+DOC_EXAMPLES_HOST_LOCATION ?= $(PWD)/docs/assets/examples
+
+sync-doc-examples:
+	@set -e; \
+	mkdir -p $(DOC_EXAMPLES_HOST_LOCATION); \
+	for engine in $(DOC_EXAMPLE_ENGINES); do \
+		mkdir -p "$(DOC_EXAMPLES_HOST_LOCATION)/$$engine"; \
+		rm -f "$(DOC_EXAMPLES_HOST_LOCATION)/$$engine/"*.png; \
+		if [ -d "$(OUTPUT_HOST_LOCATION)/$$engine" ]; then \
+			find "$(OUTPUT_HOST_LOCATION)/$$engine" -type f -name '*.png' -exec cp -f {} "$(DOC_EXAMPLES_HOST_LOCATION)/$$engine/" \; ; \
+		fi; \
+	done
+
+refresh-docs: render-all sync-doc-examples
+
 test: run-container
 	@set -e; \
 	trap '$(MAKE) stop-container >/dev/null 2>&1 || true' EXIT INT TERM; \
 	docker exec -t $(CONTAINER_NAME) sh /scripts/render_examples.sh; \
-	sh scripts/verify_examples.sh
+	OUTPUT_ROOT="$(OUTPUT_HOST_LOCATION)" sh scripts/verify_examples.sh
 
 list:
 	@printf "Examples\n"
@@ -143,8 +183,23 @@ list:
 	@printf "  d2:\n"
 	@printf "    easy, medium, complex, extreme\n"
 	@printf "\nOutputs\n"
-	@printf "  output/py/<name>/<name>.png\n"
-	@printf "  output/uml/<name>.png\n"
-	@printf "  output/mermaid/<name>.png\n"
-	@printf "  output/dot/<name>.png\n"
-	@printf "  output/d2/<name>.svg and output/d2/<name>.png\n"
+	@printf "  $(OUTPUT_HOST_LOCATION)/py/<name>/<name>.png\n"
+	@printf "  $(OUTPUT_HOST_LOCATION)/uml/<name>.png\n"
+	@printf "  $(OUTPUT_HOST_LOCATION)/mermaid/<name>.png\n"
+	@printf "  $(OUTPUT_HOST_LOCATION)/dot/<name>.png\n"
+	@printf "  $(OUTPUT_HOST_LOCATION)/d2/<name>.svg and $(OUTPUT_HOST_LOCATION)/d2/<name>.png\n"
+
+version:
+	@echo "$(DAC_VERSION)"
+
+install-script:
+	install -d "$(BINDIR)"
+	install -m 0755 dac "$(BINDIR)/dac"
+
+install-completion:
+	install -d "$(BASH_COMPLETION_DIR)" "$(ZSH_COMPLETION_DIR)"
+	install -m 0644 completions/dac.bash "$(BASH_COMPLETION_DIR)/dac"
+	install -m 0644 completions/_dac "$(ZSH_COMPLETION_DIR)/_dac"
+
+install: install-script install-completion
+	@echo "installed dac $(DAC_VERSION) to $(BINDIR)/dac"
