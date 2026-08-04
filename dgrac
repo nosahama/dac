@@ -2,16 +2,16 @@
 set -eu
 
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname "$0")" && pwd)"
-REPO_DIR="${DAC_REPO_DIR:-$SCRIPT_DIR}"
-IMAGE_NAME="${DAC_IMAGE_NAME:-dac}"
-VERSION_FILE="${DAC_VERSION_FILE:-$REPO_DIR/VERSION}"
+REPO_DIR="${DGRAC_REPO_DIR:-$SCRIPT_DIR}"
+IMAGE_NAME="${DGRAC_IMAGE_NAME:-dgrac}"
+VERSION_FILE="${DGRAC_VERSION_FILE:-$REPO_DIR/VERSION}"
 COMMAND="render"
-VERSION="${DAC_VERSION:-$(cat "$VERSION_FILE" 2>/dev/null || echo 0.1.1)}"
+VERSION="${DGRAC_VERSION:-$(cat "$VERSION_FILE" 2>/dev/null || echo 0.1.1)}"
 
 print_help() {
   cat <<'EOF'
 Usage:
-  dac [command] [options]
+  dgrac [command] [options]
 
 Commands:
   render             Render a single diagram (default)
@@ -32,7 +32,7 @@ Global options:
   --version
 
 Examples:
-  dac render --engine puml --name stack --source /opt/projects/stonetoned/bandai/infra --out /opt/projects/labs/output/diagrams
+  dgrac render --engine puml --name stack --source /opt/projects/stonetoned/bandai/infra --out /opt/projects/labs/output/diagrams
 EOF
 }
 
@@ -51,8 +51,8 @@ if [ "$COMMAND" = "version" ]; then
   exit 0
 fi
 
-SOURCE_DIR="${DAC_SOURCE_DIR:-./diagrams}"
-OUTPUT_DIR="${DAC_OUTPUT_DIR:-./output}"
+SOURCE_DIR="${DGRAC_SOURCE_DIR:-./diagrams}"
+OUTPUT_DIR="${DGRAC_OUTPUT_DIR:-./output}"
 ENGINE=""
 NAME=""
 EXT=""

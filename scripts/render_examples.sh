@@ -2,7 +2,7 @@
 set -eu
 
 ROOT="${ROOT:-${DIAGRAMS_ROOT:-/diagrams}}"
-OUTPUT_ROOT="${OUTPUT_ROOT:-${DAC_OUTPUT_ROOT:-/output}}"
+OUTPUT_ROOT="${OUTPUT_ROOT:-${DGRAC_OUTPUT_ROOT:-/output}}"
 PLANTUML_JAR="${PLANTUML_JAR:-/jars/plantuml.jar}"
 
 render_python() {

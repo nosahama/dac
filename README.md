@@ -1,8 +1,8 @@
-# dac - Diagrams as Code
+# dgrac - Diagrams as Code
 
 > **All-in-one diagram-as-code playground**: Python diagrams, PlantUML, Mermaid, Graphviz & D2 in one Docker container. Zero setup complexity. Perfect for architecture docs, CI/CD pipelines, and infrastructure visualization.
 
-`dac` is a compact diagram-as-code playground with a single Docker-based workflow.
+`dgrac` is a compact diagram-as-code playground with a single Docker-based workflow.
 
 ## ⚡ Quick Start (30 seconds)
 
@@ -21,7 +21,7 @@ make render-all
 
 That's it! All diagram engines ready to go.
 
-## 🎯 Why dac?
+## 🎯 Why dgrac?
 
 | Feature | Benefit |
 |---------|---------|
@@ -145,7 +145,7 @@ You can also run this repo against another project with the same engine layout (
 
 #### Make mode
 ```bash
-make -C /opt/projects/labs/dac render \
+make -C /opt/projects/labs/dgrac render \
   DIAGRAMS_HOST_LOCATION=/opt/projects/stonetoned/bandai/infra \
   OUTPUT_HOST_LOCATION=/tmp/bandai-infra-diagrams \
   engine=puml \
@@ -155,7 +155,7 @@ make -C /opt/projects/labs/dac render \
 
 #### CLI mode (recommended for reusable tool usage)
 ```bash
-/opt/projects/labs/dac/dac render \
+/opt/projects/labs/dgrac/dgrac render \
   --source /opt/projects/stonetoned/bandai/infra \
   --engine puml \
   --name stack \
@@ -175,7 +175,7 @@ CLI arguments:
 ## 📂 Project Structure
 
 ```
-dac/
+dgrac/
 ├── diagrams/
 │   ├── py/          # Python diagram examples
 │   ├── uml/         # PlantUML examples (including C4)
@@ -228,8 +228,8 @@ make install-completion PREFIX=$HOME/.local
 ```
 
 ```bash
-dac --version
-dac version
+dgrac --version
+dgrac version
 ```
 
 `VERSION` is the semantic version source. Current value is `0.1.1`.

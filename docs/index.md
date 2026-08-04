@@ -1,9 +1,9 @@
 ---
 layout: default
-title: "dac - Diagrams as Code"
+title: "dgrac - Diagrams as Code"
 ---
 
-# dac - Diagrams as Code
+# dgrac - Diagrams as Code
 
 <div class="page-actions">
   <a href="{{ site.baseurl }}/gallery.html" class="btn btn-primary">📚 View Gallery</a>
@@ -35,11 +35,11 @@ title: "dac - Diagrams as Code"
   </a>
 </div>
 
-Welcome to **dac**, the all-in-one diagram-as-code playground with zero setup complexity.
+Welcome to **dgrac**, the all-in-one diagram-as-code playground with zero setup complexity.
 
-## What is dac?
+## What is dgrac?
 
-`dac` brings together **5 professional diagram engines** in a single Docker container with one Makefile. No npm, no pip, no dependency hell—just run `make` and get beautiful diagrams.
+`dgrac` brings together **5 professional diagram engines** in a single Docker container with one Makefile. No npm, no pip, no dependency hell—just run `make` and get beautiful diagrams.
 
 ### Supported Engines
 
@@ -49,7 +49,7 @@ Welcome to **dac**, the all-in-one diagram-as-code playground with zero setup co
 - **Graphviz DOT** — Precise control, dependency graphs
 - **D2** — Modern syntax with strong styling
 
-## Why dac?
+## Why dgrac?
 
 ### Problem
 Diagram-as-code tools are powerful but scattered:
@@ -79,8 +79,8 @@ make render-all
 
 ### 1. Clone & Enter Directory
 ```bash
-git clone https://github.com/nosahama/dac.git
-cd dac
+git clone https://github.com/nosahama/dgrac.git
+cd dgrac
 ```
 
 ### 2. Start Container

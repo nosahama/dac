@@ -1,6 +1,6 @@
-CONTAINER_NAME = dac
+CONTAINER_NAME = dgrac
 IMAGE_NAME := $(CONTAINER_NAME)
-DAC_VERSION := $(strip $(shell [ -f VERSION ] && cat VERSION || echo 0.1.1))
+DGRAC_VERSION := $(strip $(shell [ -f VERSION ] && cat VERSION || echo 0.1.1))
 
 JAVA_JARS_LOCATION := /jars
 DIAGRAMS_CONTAINER_LOCATION := /diagrams
@@ -13,11 +13,11 @@ BINDIR ?= $(PREFIX)/bin
 BASH_COMPLETION_DIR ?= $(PREFIX)/share/bash-completion/completions
 ZSH_COMPLETION_DIR ?= $(PREFIX)/share/zsh/site-functions
 
-PY_DAC_CONTAINER_LOCATION := $(DIAGRAMS_CONTAINER_LOCATION)/py
-UML_DAC_CONTAINER_LOCATION := $(DIAGRAMS_CONTAINER_LOCATION)/uml
-MERMAID_DAC_CONTAINER_LOCATION := $(DIAGRAMS_CONTAINER_LOCATION)/mermaid
-DOT_DAC_CONTAINER_LOCATION := $(DIAGRAMS_CONTAINER_LOCATION)/dot
-D2_DAC_CONTAINER_LOCATION := $(DIAGRAMS_CONTAINER_LOCATION)/d2
+PY_DGRAC_CONTAINER_LOCATION := $(DIAGRAMS_CONTAINER_LOCATION)/py
+UML_DGRAC_CONTAINER_LOCATION := $(DIAGRAMS_CONTAINER_LOCATION)/uml
+MERMAID_DGRAC_CONTAINER_LOCATION := $(DIAGRAMS_CONTAINER_LOCATION)/mermaid
+DOT_DGRAC_CONTAINER_LOCATION := $(DIAGRAMS_CONTAINER_LOCATION)/dot
+D2_DGRAC_CONTAINER_LOCATION := $(DIAGRAMS_CONTAINER_LOCATION)/d2
 
 # Other config
 OK_COLOR=\033[32;01m
@@ -33,7 +33,7 @@ WARN_COLOR=\033[33;01m
 .PHONY: help setup clean run-container stop-container test \
 	generate-py generate-puml generate-mermaid generate-dot generate-d2 \
 	diagrams-py diagrams-uml diagrams-mermaid diagrams-dot diagrams-d2 \
-	dac-py dac-uml dac-mermaid dac-dot dac-d2 \
+	dgrac-py dgrac-uml dgrac-mermaid dgrac-dot dgrac-d2 \
 	render render-all sync-doc-examples refresh-docs list doctor version install install-script install-completion \
 	docs-build docs-serve
 
@@ -55,8 +55,8 @@ help:
 	@echo "  docs-build           build docs with Jekyll (theme + page conversion) using docs/_config.yml"
 	@echo "  docs-serve           run Jekyll preview server at http://localhost:\$${DOCS_PORT:-4000}/"
 	@echo "  test                 render and verify every supported diagram type"
-	@echo "  version              print dac version"
-	@echo "  install              install dac into \$$BINDIR"
+	@echo "  version              print dgrac version"
+	@echo "  install              install dgrac into \$$BINDIR"
 	@echo "  install-completion   install shell completions"
 	@echo ""
 	@echo "Options"
@@ -101,23 +101,23 @@ stop-container:
 	@docker rm -f $(CONTAINER_NAME) >/dev/null 2>&1 || true
 
 generate-py:
-	@printf "$(OK_COLOR)==> Running DaC Python $(NO_COLOR)\n"
+	@printf "$(OK_COLOR)==> Running Dgrac Python $(NO_COLOR)\n"
 	docker exec -t $(CONTAINER_NAME) sh /scripts/render_one.sh py $(filename) $(inputext)
 
 generate-puml:
-	@printf "$(OK_COLOR)==> Running DaC PlantUML $(NO_COLOR)\n"
+	@printf "$(OK_COLOR)==> Running Dgrac PlantUML $(NO_COLOR)\n"
 	docker exec -t $(CONTAINER_NAME) sh /scripts/render_one.sh puml $(filename) $(inputext)
 
 generate-mermaid:
-	@printf "$(OK_COLOR)==> Running DaC Mermaid $(NO_COLOR)\n"
+	@printf "$(OK_COLOR)==> Running Dgrac Mermaid $(NO_COLOR)\n"
 	docker exec -t $(CONTAINER_NAME) sh /scripts/render_one.sh mermaid $(filename) $(inputext)
 
 generate-dot:
-	@printf "$(OK_COLOR)==> Running DaC Graphviz $(NO_COLOR)\n"
+	@printf "$(OK_COLOR)==> Running Dgrac Graphviz $(NO_COLOR)\n"
 	docker exec -t $(CONTAINER_NAME) sh /scripts/render_one.sh dot $(filename) $(inputext)
 
 generate-d2:
-	@printf "$(OK_COLOR)==> Running DaC D2 $(NO_COLOR)\n"
+	@printf "$(OK_COLOR)==> Running Dgrac D2 $(NO_COLOR)\n"
 	docker exec -t $(CONTAINER_NAME) sh /scripts/render_one.sh d2 $(filename) $(inputext)
 
 render:
@@ -142,11 +142,11 @@ diagrams-mermaid: generate-mermaid
 diagrams-dot: generate-dot
 diagrams-d2: generate-d2
 
-dac-py: generate-py
-dac-uml: generate-puml
-dac-mermaid: generate-mermaid
-dac-dot: generate-dot
-dac-d2: generate-d2
+dgrac-py: generate-py
+dgrac-uml: generate-puml
+dgrac-mermaid: generate-mermaid
+dgrac-dot: generate-dot
+dgrac-d2: generate-d2
 
 render-all: run-container
 	docker exec -t $(CONTAINER_NAME) sh /scripts/render_examples.sh
@@ -155,7 +155,7 @@ DOC_EXAMPLE_ENGINES := py uml mermaid dot d2
 DOC_EXAMPLES_HOST_LOCATION ?= $(PWD)/docs/assets/examples
 DOCS_SOURCE_LOCATION ?= $(PWD)/docs
 DOCS_BUILD_DIRECTORY ?= _site
-DOCS_BASE_URL ?= /dac
+DOCS_BASE_URL ?= /dgrac
 DOCS_HOST ?= 0.0.0.0
 DOCS_PORT ?= 4000
 
@@ -217,16 +217,16 @@ list:
 	@printf "  $(OUTPUT_HOST_LOCATION)/d2/<name>.svg and $(OUTPUT_HOST_LOCATION)/d2/<name>.png\n"
 
 version:
-	@echo "$(DAC_VERSION)"
+	@echo "$(DGRAC_VERSION)"
 
 install-script:
 	install -d "$(BINDIR)"
-	install -m 0755 dac "$(BINDIR)/dac"
+	install -m 0755 dgrac "$(BINDIR)/dgrac"
 
 install-completion:
 	install -d "$(BASH_COMPLETION_DIR)" "$(ZSH_COMPLETION_DIR)"
-	install -m 0644 completions/dac.bash "$(BASH_COMPLETION_DIR)/dac"
-	install -m 0644 completions/_dac "$(ZSH_COMPLETION_DIR)/_dac"
+	install -m 0644 completions/dgrac.bash "$(BASH_COMPLETION_DIR)/dgrac"
+	install -m 0644 completions/_dgrac "$(ZSH_COMPLETION_DIR)/_dgrac"
 
 install: install-script install-completion
-	@echo "installed dac $(DAC_VERSION) to $(BINDIR)/dac"
+	@echo "installed dgrac $(DGRAC_VERSION) to $(BINDIR)/dgrac"

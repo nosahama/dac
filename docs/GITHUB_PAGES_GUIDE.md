@@ -6,11 +6,11 @@
 
 ## 🌐 Custom Domain (Optional)
 
-Want `https://dac.example.com` instead of `https://nosahama.github.io/diagrams-as-code`?
+Want `https://dgrac.example.com` instead of `https://nosahama.github.io/diagrams-as-code`?
 
 1. **Buy a domain** (GoDaddy, Namecheap, etc.)
 2. **Go to repo Settings → Pages**
-3. **Enter domain:** `dac.example.com`
+3. **Enter domain:** `dgrac.example.com`
 4. **Update DNS records** at your registrar
 5. **GitHub handles SSL certificate** (HTTPS) automatically
 
@@ -69,10 +69,10 @@ ls -la docs/
 
 ---
 
-## 📊 Your dac Setup Breakdown
+## 📊 Your dgrac Setup Breakdown
 
 ```
-nosahama/dac (your repository)
+nosahama/dgrac (your repository)
 │
 ├── docs/ ← GitHub Pages source
 │   ├── _config.yml      ← Jekyll config (theme, title)
@@ -110,7 +110,7 @@ docs/
 
 Edit `_config.yml`:
 ```yaml
-title: dac - Diagrams as Code
+title: dgrac - Diagrams as Code
 theme: jekyll-theme-minimal
 nav:
   - title: Home

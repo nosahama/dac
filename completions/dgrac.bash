@@ -1,7 +1,7 @@
-#compdef dac
-# Bash completion for dac
+#compdef dgrac
+# Bash completion for dgrac
 
-_dac() {
+_dgrac() {
   local cur prev cmd
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
@@ -59,4 +59,4 @@ _dac() {
   esac
 }
 
-complete -F _dac dac
+complete -F _dgrac dgrac

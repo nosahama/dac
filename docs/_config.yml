@@ -1,5 +1,5 @@
 theme: jekyll-theme-minimal
-title: dac - Diagrams as Code
+title: dgrac - Diagrams as Code
 description: All-in-one diagram-as-code playground. Python diagrams, PlantUML, Mermaid, Graphviz & D2 in one Docker container.
 show_downloads: true
 baseurl: "/diagrams-as-code"

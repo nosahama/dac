@@ -1,6 +1,6 @@
-#compdef dac
+#compdef dgrac
 
-_dac() {
+_dgrac() {
   _arguments -C \
     '1: :->command' \
     '*: :->args'
@@ -45,4 +45,4 @@ _dac() {
   esac
 }
 
-compdef _dac dac
+compdef _dgrac dgrac
